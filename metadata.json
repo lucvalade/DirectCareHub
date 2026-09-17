@@ -1,0 +1,6 @@
+{
+  "name": "DirectCare Hub - Ontario Direct Funding Attendant Operations",
+  "description": "Comprehensive self-directed attendant care management platform for Direct Funding employers in Ontario: scheduling, ESA compliance, timesheets, itemized payroll, ambient voice handover, and emergency relief.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
