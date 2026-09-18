@@ -48,6 +48,17 @@ let mockDocuments: VaultDocument[] = [
     status: 'expiring_soon',
     uploaded_at: '2026-07-01T08:00:00Z',
     expires_at: '2026-09-30T00:00:00Z'
+  },
+  {
+    id: 'doc_budget_01',
+    title: 'Direct Funding Budget Allocation • September 2026',
+    doc_type: 'budget_allocation',
+    attendant_id: '',
+    attendant_name: 'Confidential (Employer/Auditor)',
+    employer_id: 'emp_ontario_01',
+    status: 'active',
+    uploaded_at: '2026-09-01T08:00:00Z',
+    is_confidential: true
   }
 ];
 

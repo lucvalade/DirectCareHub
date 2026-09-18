@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavigationHeader from '@/components/NavigationHeader';
-import { Users, Phone, Mail, Award, CheckCircle2, AlertTriangle, Plus } from 'lucide-react';
+import { Users, Phone, Mail, Award, CheckCircle2, Loader2 } from 'lucide-react';
+import TrainingLogManager from '@/components/training/TrainingLogManager';
+import { fetchTrainingLogs } from '@/app/actions/training';
+import { TrainingLogEntry } from '@/types/training';
 
 interface Attendant {
   id: string;
@@ -18,7 +21,7 @@ interface Attendant {
 
 const INITIAL_ROSTER: Attendant[] = [
   {
-    id: 'att_1',
+    id: 'psw_elena_02',
     name: 'Elena Rostova',
     role: 'Lead PSW / Attendant',
     phone: '647-555-0144',
@@ -54,21 +57,37 @@ const INITIAL_ROSTER: Attendant[] = [
 
 export default function AttendantsPage() {
   const [roster] = useState<Attendant[]>(INITIAL_ROSTER);
+  const [existingLogs, setExistingLogs] = useState<TrainingLogEntry[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(true);
+
+  useEffect(() => {
+    async function loadLogs() {
+      setLoadingLogs(true);
+      const res = await fetchTrainingLogs();
+      if (res.data) {
+        setExistingLogs(res.data);
+      }
+      setLoadingLogs(false);
+    }
+    loadLogs();
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col">
       <NavigationHeader />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-sm">
+            <div className="p-3 bg-emerald-600 text-white rounded-2xl shadow-sm">
               <Users className="w-6 h-6" />
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-900 tracking-tight">Attendant Team & Roster</h1>
               <p className="text-xs font-medium text-slate-500">
-                Direct Funding hired attendants, emergency relief availability, and credentials
+                Direct Funding hired attendants, credentials compliance, and safety sign-offs.
               </p>
             </div>
           </div>
@@ -84,10 +103,10 @@ export default function AttendantsPage() {
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-lg font-black text-slate-900">{attendant.name}</h3>
-                    <p className="text-xs font-semibold text-blue-600">{attendant.role}</p>
+                    <h3 className="text-sm font-black text-slate-900">{attendant.name}</h3>
+                    <p className="text-[11px] font-bold text-emerald-600">{attendant.role}</p>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                  <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${
                     attendant.reliefAvailable ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
                   }`}>
                     {attendant.reliefAvailable ? 'Relief On-Call' : 'Off-Duty'}
@@ -107,16 +126,16 @@ export default function AttendantsPage() {
 
                 <div className="pt-3 border-t border-slate-100 space-y-1 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Hourly Rate</span>
-                    <span className="font-bold text-slate-900">${attendant.hourlyRate.toFixed(2)}/hr</span>
+                    <span className="text-slate-500 font-medium">Hourly Rate</span>
+                    <span className="font-extrabold text-slate-900">${attendant.hourlyRate.toFixed(2)}/hr</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">CPR Expiry</span>
-                    <span className="font-bold text-slate-900">{attendant.cprExpiry}</span>
+                    <span className="text-slate-500 font-medium">CPR Expiry</span>
+                    <span className="font-extrabold text-slate-900">{attendant.cprExpiry}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">WSIB Ontario</span>
-                    <span className="font-bold text-emerald-700 flex items-center">
+                    <span className="text-slate-500 font-medium">WSIB Ontario</span>
+                    <span className="font-extrabold text-emerald-700 flex items-center">
                       <CheckCircle2 className="w-3 h-3 mr-1" /> Cleared
                     </span>
                   </div>
@@ -125,13 +144,30 @@ export default function AttendantsPage() {
 
               <a
                 href={`tel:${attendant.phone}`}
-                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold text-center transition block cursor-pointer"
+                className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-800 rounded-xl text-xs font-bold text-center transition block cursor-pointer"
               >
                 Call Attendant
               </a>
             </div>
           ))}
         </div>
+
+        {/* WSIB Training & Liability Register */}
+        <div>
+          {loadingLogs ? (
+            <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-2">
+              <Loader2 className="w-6 h-6 animate-spin text-emerald-600 mx-auto" />
+              <p className="text-xs text-slate-500">Loading safety registers...</p>
+            </div>
+          ) : (
+            <TrainingLogManager
+              employerId="emp_ontario_01"
+              attendants={INITIAL_ROSTER.map(a => ({ id: a.id, name: a.name }))}
+              existingLogs={existingLogs}
+            />
+          )}
+        </div>
+
       </main>
     </div>
   );

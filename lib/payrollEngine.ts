@@ -1,80 +1,106 @@
-export interface PayrollCalculationInput {
-  regularHours: number;
-  hourlyRate: number;
-  statHours?: number;
-  statRate?: number;
-  federalClaimCode?: number;
-  ontarioClaimCode?: number;
+import { adminDb } from "@/lib/firebase-admin";
+
+export interface PayRunResult {
+  id: string;
+  employer_id: string;
+  attendant_id: string;
+  attendant_name: string;
+  period_start: string;
+  period_end: string;
+  pay_date: string;
+  hours_worked: number;
+  hourly_rate: number;
+  gross_wages: number;
+  vacation_pay: number;
+  gross_pay: number; // total gross with vacation pay
+  cpp_deduction: number;
+  ei_deduction: number;
+  income_tax: number;
+  total_deductions: number;
+  non_taxable_reimbursements: number;
+  reimbursed_expense_ids: string[];
+  net_pay: number;
+  status: 'draft' | 'approved' | 'paid';
 }
 
-export interface PayrollCalculationResult {
-  regularWages: number;
-  statHolidayWages: number;
-  subtotalWages: number;
-  vacationPayAmount: number;
-  grossPay: number;
-  cppDeduction: number;
-  eiDeduction: number;
-  incomeTaxDeduction: number;
-  totalDeductions: number;
-  netPay: number;
-  employerCpp: number;
-  employerEi: number;
-  wsibInsurableEarnings: number;
-}
+export async function generateBiWeeklyPayRun(
+  employerId: string, 
+  attendantId: string,
+  hoursWorked: number = 60.0,
+  hourlyRate: number = 23.50,
+  periodStart: string = "2026-09-01",
+  periodEnd: string = "2026-09-15",
+  payDate: string = "2026-09-20",
+  attendantName?: string
+): Promise<PayRunResult> {
+  // 1. Calculate Standard Wages
+  const grossWages = hoursWorked * hourlyRate;
+  const vacationPay = grossWages * 0.04; // 4% Ontario ESA Minimum Vacation Pay
+  const grossPay = grossWages + vacationPay;
 
-export function calculateAttendantPayroll(input: PayrollCalculationInput): PayrollCalculationResult {
-  const regularHours = input.regularHours || 0;
-  const hourlyRate = input.hourlyRate || 20.0;
-  const statHours = input.statHours || 0;
-  const statRate = input.statRate || (hourlyRate * 1.5);
+  // 2. Calculate Standard Statutory Deductions
+  const cppDeduction = parseFloat((grossPay * 0.0595).toFixed(2)); // CPP Employee contribution rate
+  const eiDeduction = parseFloat((grossPay * 0.0166).toFixed(2));  // EI Employee rate
+  const incomeTax = parseFloat((grossPay * 0.0857).toFixed(2));    // Federal + Ontario simplified tax rate
+  const totalDeductions = parseFloat((cppDeduction + eiDeduction + incomeTax).toFixed(2));
 
-  const regularWages = regularHours * hourlyRate;
-  const statHolidayWages = statHours * statRate;
-  const subtotalWages = regularWages + statHolidayWages;
+  // 3. Fetch all approved expenses that haven't been reimbursed yet
+  const expensesSnap = await adminDb.collection("expenses")
+    .where("employer_id", "==", employerId)
+    .where("attendant_id", "==", attendantId)
+    .where("status", "==", "approved")
+    .get();
 
-  // 4% minimum vacation pay under Ontario ESA
-  const vacationPayAmount = subtotalWages * 0.04;
-  const grossPay = subtotalWages + vacationPayAmount;
+  let nonTaxableReimbursements = 0;
+  const reimbursedExpenseIds: string[] = [];
 
-  // CPP Calculation (Bi-weekly basic exemption: $3,500 / 26 = $134.62)
-  const biWeeklyExemption = 134.62;
-  const pensionableEarnings = Math.max(0, grossPay - biWeeklyExemption);
-  const cppDeduction = pensionableEarnings * 0.0595; // 5.95% employee rate
+  expensesSnap.docs.forEach((doc: any) => {
+    const expense = doc.data();
+    nonTaxableReimbursements += expense.amount;
+    reimbursedExpenseIds.push(doc.id || expense.id);
+  });
 
-  // EI Calculation (1.63% employee rate for Ontario)
-  const eiDeduction = grossPay * 0.0163;
+  // 4. Add non-taxable reimbursements directly to Net Pay (after all taxes are deducted from Gross)
+  const netPay = parseFloat(((grossPay - cppDeduction - eiDeduction - incomeTax) + nonTaxableReimbursements).toFixed(2));
 
-  // Federal & Provincial Income Tax Estimation (TD1 Claim Code 1 default)
-  // Simplified progressive bracket model or standard TD1 estimate based on gross
-  let incomeTaxDeduction = 0;
-  if (grossPay > 300) {
-    incomeTaxDeduction = Math.round((grossPay * 0.125) * 100) / 100;
-  } else {
-    incomeTaxDeduction = Math.round((grossPay * 0.08) * 100) / 100;
+  const payRunData: PayRunResult = {
+    id: `pay_${Date.now()}`,
+    employer_id: employerId,
+    attendant_id: attendantId,
+    attendant_name: attendantName || "Elena Rostova", // Standard display name fallback
+    period_start: periodStart,
+    period_end: periodEnd,
+    pay_date: payDate,
+    hours_worked: hoursWorked,
+    hourly_rate: hourlyRate,
+    gross_wages: grossWages,
+    vacation_pay: vacationPay,
+    gross_pay: grossPay,
+    cpp_deduction: cppDeduction,
+    ei_deduction: eiDeduction,
+    income_tax: incomeTax,
+    total_deductions: totalDeductions,
+    non_taxable_reimbursements: nonTaxableReimbursements,
+    reimbursed_expense_ids: reimbursedExpenseIds,
+    net_pay: netPay,
+    status: 'draft',
+  };
+
+  // 5. Mark the expenses as fully reimbursed so they don't roll over to the next period
+  if (reimbursedExpenseIds.length > 0) {
+    const batch = adminDb.batch();
+    reimbursedExpenseIds.forEach(id => {
+      const expenseRef = adminDb.collection("expenses").doc(id);
+      batch.update(expenseRef, {
+        status: "reimbursed",
+        reimbursed_on_pay_run_id: payRunData.id,
+      });
+    });
+    await batch.commit();
   }
 
-  const totalDeductions = cppDeduction + eiDeduction + incomeTaxDeduction;
-  const netPay = grossPay - totalDeductions;
+  // 6. Save the generated paystub/payrun to collection
+  await adminDb.collection("paystubs").doc(payRunData.id).set(payRunData);
 
-  // Employer Contributions
-  const employerCpp = cppDeduction; // 1.0x matching
-  const employerEi = eiDeduction * 1.4; // 1.4x matching under EI premium reduction / standard rules
-  const wsibInsurableEarnings = grossPay;
-
-  return {
-    regularWages: Math.round(regularWages * 100) / 100,
-    statHolidayWages: Math.round(statHolidayWages * 100) / 100,
-    subtotalWages: Math.round(subtotalWages * 100) / 100,
-    vacationPayAmount: Math.round(vacationPayAmount * 100) / 100,
-    grossPay: Math.round(grossPay * 100) / 100,
-    cppDeduction: Math.round(cppDeduction * 100) / 100,
-    eiDeduction: Math.round(eiDeduction * 100) / 100,
-    incomeTaxDeduction: Math.round(incomeTaxDeduction * 100) / 100,
-    totalDeductions: Math.round(totalDeductions * 100) / 100,
-    netPay: Math.round(netPay * 100) / 100,
-    employerCpp: Math.round(employerCpp * 100) / 100,
-    employerEi: Math.round(employerEi * 100) / 100,
-    wsibInsurableEarnings: Math.round(wsibInsurableEarnings * 100) / 100,
-  };
+  return payRunData;
 }

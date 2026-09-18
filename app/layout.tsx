@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import RouteGuard from "@/components/RouteGuard";
 
 export const metadata: Metadata = {
   title: "DirectCare Hub - Ontario Direct Funding Attendant Operations",
@@ -20,9 +21,12 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased bg-slate-50 text-slate-900 min-h-screen">
         <AuthProvider>
-          {children}
+          <RouteGuard>
+            {children}
+          </RouteGuard>
         </AuthProvider>
       </body>
     </html>
   );
 }
+
