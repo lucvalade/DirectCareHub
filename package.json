@@ -10,19 +10,26 @@
   },
   "dependencies": {
     "@google/genai": "^2.23.0",
+    "@types/uuid": "^11.0.0",
+    "@types/web-push": "^3.6.4",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "firebase": "^11.9.0",
     "firebase-admin": "^13.4.0",
     "html2canvas": "^1.4.1",
+    "idb-keyval": "^6.3.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.16.0",
     "motion": "^12.4.7",
     "next": "^15.2.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-hot-toast": "^2.6.1",
     "tailwind-merge": "^3.0.1",
-    "zod": "^4.6.5"
+    "uuid": "^14.0.2",
+    "web-push": "^3.6.7",
+    "zod": "^4.6.5",
+    "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.11",

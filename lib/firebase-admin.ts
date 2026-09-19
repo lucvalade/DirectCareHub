@@ -113,79 +113,9 @@ class MockBucket {
 
 // Global In-Memory Stores
 const MEMORY_DB: any = {
-  expenses: {
-    'exp_01': {
-      id: 'exp_01',
-      attendant_id: 'psw_elena_02',
-      attendant_name: 'Elena Rostova (Lead PSW)',
-      employer_id: 'emp_ontario_01',
-      date_incurred: '2026-09-12',
-      category: 'groceries',
-      amount: 64.50,
-      description: 'Special dietary liquid thickeners and morning grocery run at Metro.',
-      status: 'pending',
-      submitted_at: '2026-09-13T10:15:00Z',
-      receipt_url: 'https://picsum.photos/seed/receipt1/400/600'
-    },
-    'exp_02': {
-      id: 'exp_02',
-      attendant_id: 'att_2',
-      attendant_name: 'Kavita Patel (Evening Attendant)',
-      employer_id: 'emp_ontario_01',
-      date_incurred: '2026-09-10',
-      category: 'transit',
-      amount: 12.80,
-      description: 'Emergency late-night TTC transit return trip due to shift extension.',
-      status: 'approved',
-      submitted_at: '2026-09-11T08:30:00Z',
-      approved_at: '2026-09-11T12:00:00Z',
-      receipt_url: 'https://picsum.photos/seed/receipt2/400/600'
-    },
-    'exp_03': {
-      id: 'exp_03',
-      attendant_id: 'psw_elena_02',
-      attendant_name: 'Elena Rostova (Lead PSW)',
-      employer_id: 'emp_ontario_01',
-      date_incurred: '2026-09-14',
-      category: 'supplies',
-      amount: 45.20,
-      description: 'Nitrile gloves Box of 100 (Size M) purchased at Shoppers Drug Mart.',
-      status: 'pending',
-      submitted_at: '2026-09-14T17:40:00Z',
-      receipt_url: 'https://picsum.photos/seed/receipt3/400/600'
-    }
-  },
-  training_logs: {
-    'tr_01': {
-      id: 'tr_01',
-      attendant_id: 'psw_elena_02',
-      attendant_name: 'Elena Rostova (Lead PSW)',
-      employer_id: 'emp_ontario_01',
-      category: 'mechanical_lift',
-      skill_title: 'Arjo Ceiling Lift & Loop Configuration',
-      equipment_model: 'Arjo Maxi Sky 440 / Medium Clip-to-Loop',
-      training_date: '2026-08-15',
-      notes: 'Elena demonstrated excellent sling loop settings and Arjo lift handling under full load with complete patient stability.',
-      employer_signed_at: '2026-08-15T14:30:00Z',
-      attendant_acknowledged: true,
-      attendant_acknowledged_at: '2026-08-15T15:00:00Z',
-      expiry_or_renewal_date: '2027-08-15'
-    },
-    'tr_02': {
-      id: 'tr_02',
-      attendant_id: 'att_2',
-      attendant_name: 'Kavita Patel (Evening Attendant)',
-      employer_id: 'emp_ontario_01',
-      category: 'transfer_technique',
-      skill_title: 'Slide Sheet Transfer',
-      equipment_model: 'Standard Slide Sheet & Transfer Board',
-      training_date: '2026-09-02',
-      notes: 'Reviewed proper spinal mechanics during sliding sheets maneuvers.',
-      employer_signed_at: '2026-09-02T16:00:00Z',
-      attendant_acknowledged: false,
-      expiry_or_renewal_date: '2027-09-02'
-    }
-  }
+  expenses: {},
+  training_logs: {},
+  shifts: {}
 };
 
 let dbInstance: any = null;
@@ -197,13 +127,11 @@ function initAdminSDK() {
     return { db: null, storage: null };
   }
 
-  // If already initialized
   if (dbInstance && storageInstance) {
     return { db: dbInstance, storage: storageInstance };
   }
 
   try {
-    // Only attempt real initialization if Firebase Admin has credential environment variable
     const hasServiceAccount = process.env.FIREBASE_CONFIG || process.env.GOOGLE_APPLICATION_CREDENTIALS;
     
     if (hasServiceAccount) {
@@ -212,7 +140,6 @@ function initAdminSDK() {
       }
       dbInstance = admin.firestore();
       storageInstance = admin.storage();
-      console.log('Firebase Admin SDK Initialized Successfully.');
       return { db: dbInstance, storage: storageInstance };
     }
   } catch (err) {
@@ -222,7 +149,15 @@ function initAdminSDK() {
   // Mock Fallbacks
   const mockDb = {
     collection: (name: string) => new MockCollection(name, MEMORY_DB),
-    batch: () => new MockBatch(MEMORY_DB)
+    batch: () => new MockBatch(MEMORY_DB),
+    runTransaction: async (updateFunction: any) => {
+      const mockTransaction = {
+        get: async (ref: any) => ref.get(),
+        update: (ref: any, data: any) => ref.update(data),
+        set: (ref: any, data: any) => ref.set(data)
+      };
+      return updateFunction(mockTransaction);
+    }
   };
 
   const mockStorage = {
@@ -236,9 +171,14 @@ function initAdminSDK() {
 
 export const adminDb = {
   collection: (name: string) => initAdminSDK().db.collection(name),
-  batch: () => initAdminSDK().db.batch()
+  batch: () => initAdminSDK().db.batch(),
+  runTransaction: (fn: any) => initAdminSDK().db.runTransaction(fn)
 };
 
 export const adminStorage = {
   bucket: () => initAdminSDK().storage.bucket()
+};
+
+export const adminFieldValue = {
+  serverTimestamp: () => new Date().toISOString()
 };
