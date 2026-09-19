@@ -83,12 +83,30 @@ export default function Navbar({
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setProfileDropdownOpen(false);
+    setMobileMenuOpen(false);
     if (propOnSignOut) {
       propOnSignOut();
     } else {
-      signOut();
+      await signOut();
+    }
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+  };
+
+  const handleBrandClick = (e: React.MouseEvent) => {
+    setMobileMenuOpen(false);
+    setProfileDropdownOpen(false);
+    setPayrollDropdownOpen(false);
+    if (onSelectTab) {
+      onSelectTab("overview");
+    }
+    if (pathname === "/") {
+      router.push("/?tab=overview");
+    } else {
+      router.push("/");
     }
   };
 
@@ -131,7 +149,7 @@ export default function Navbar({
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          <Link href="/" className="flex items-center space-x-3 group cursor-pointer">
+          <Link href="/" onClick={handleBrandClick} className="flex items-center space-x-3 group cursor-pointer">
             <div className="w-10 h-10 bg-blue-600 group-hover:bg-blue-700 rounded-xl flex items-center justify-center text-white shadow-md transition shrink-0">
               <Shield className="w-5.5 h-5.5" />
             </div>

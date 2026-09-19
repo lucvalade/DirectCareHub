@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -742,7 +744,14 @@ function HomeContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
           
           {/* Logo Brand Title */}
-          <div className="flex items-center space-x-3 shrink-0">
+          <Link 
+            href="/" 
+            onClick={(e) => {
+              setShowDashboard(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }} 
+            className="flex items-center space-x-3 shrink-0 cursor-pointer group"
+          >
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-md">
               <Shield className="w-5.5 h-5.5" />
             </div>
@@ -757,7 +766,7 @@ function HomeContent() {
                 Self-Managed Care
               </span>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-1 text-xs font-bold text-slate-600">
@@ -771,7 +780,7 @@ function HomeContent() {
               onClick={() => scrollToSection("cilt-funding-section")} 
               className="min-h-[48px] px-3.5 rounded-xl hover:bg-slate-50 hover:text-slate-900 cursor-pointer"
             >
-              How It Pays For It
+              How It Pays For Itself
             </button>
             <button 
               onClick={() => scrollToSection("comparison-section")} 
@@ -993,76 +1002,83 @@ function HomeContent() {
 
       {/* 3. PAIN VS RELIEF COMPARISON GRID */}
       <section id="comparison-section" className="py-16 lg:py-24 bg-slate-50 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs font-black uppercase tracking-wider text-blue-600">Administrative Contrast</span>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight">The Friction vs. The Freedom</h2>
-            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-              Managing caregivers shouldn't feel like running a complex corporation by hand. See how DirectCare Hub modernizes your compliance workflow.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Main Section Card Wrapper in #155dfc */}
+          <div className="bg-[#155dfc] text-white rounded-3xl p-8 sm:p-12 space-y-12 shadow-xl border border-blue-600">
             
-            {/* The Fragmented Paper Stack */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs">
-              <div className="flex items-center space-x-3 text-rose-700 border-b pb-4">
-                <AlertTriangle className="w-6 h-6 shrink-0" />
-                <h3 className="text-lg font-black uppercase tracking-wide">The Fragmented Paper Stack</h3>
-              </div>
-              <ul className="space-y-4 text-xs font-bold text-slate-600">
-                <li className="flex items-start gap-2.5">
-                  <span className="text-rose-500 text-base leading-none">❌</span>
-                  <span><strong>Lost Timesheets & Erasures</strong>: Misplaced papers force manual recalculations, causing friction with attendants and missing record tracks.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-rose-500 text-base leading-none">❌</span>
-                  <span><strong>Manual Payroll Calculations</strong>: Hand-calculating EI, CPP, Income Tax, and 4% vacation accruals increases liability for CRA penalties.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-rose-500 text-base leading-none">❌</span>
-                  <span><strong>Pre-shift Callout Scrambles</strong>: Spending hours on group chats and phone tag when an attendant calls in sick 30 minutes before a transfer.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-rose-500 text-base leading-none">❌</span>
-                  <span><strong>Defenceless WSIB Audits</strong>: No written proof that a caregiver was trained on your ceiling lift sling loop colors during an injury dispute.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-rose-500 text-base leading-none">❌</span>
-                  <span><strong>Scattered Quarterly Receipts</strong>: Sorting through shoeboxes of physical receipts to justify expenditures to CILT or program auditors.</span>
-                </li>
-              </ul>
+            <div className="text-center space-y-3 max-w-2xl mx-auto">
+              <span className="text-xs font-black uppercase tracking-wider bg-white text-[#155dfc] px-3.5 py-1.5 rounded-full border border-blue-200 inline-block shadow-xs">
+                Administrative Contrast
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">The Friction vs. The Freedom</h2>
+              <p className="text-xs sm:text-sm text-blue-100 leading-relaxed font-medium">
+                Managing caregivers shouldn't feel like running a complex corporation by hand. See how DirectCare Hub modernizes your compliance workflow.
+              </p>
             </div>
 
-            {/* The DirectCare Hub Way */}
-            <div className="bg-white rounded-3xl border-2 border-blue-600 p-6 sm:p-8 space-y-6 shadow-sm">
-              <div className="flex items-center space-x-3 text-blue-700 border-b pb-4">
-                <CheckCircle2 className="w-6 h-6 text-blue-600 shrink-0" />
-                <h3 className="text-lg font-black uppercase tracking-wide">The DirectCare Hub Way</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              
+              {/* The Fragmented Paper Stack (Inner Card: White bg, Black text, Red title & X's) */}
+              <div className="bg-white text-slate-900 rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-md">
+                <div className="flex items-center space-x-3 border-b border-slate-200 pb-4">
+                  <AlertTriangle className="w-6 h-6 shrink-0 text-red-600" />
+                  <h3 className="text-lg font-black uppercase tracking-wide text-red-600">The Fragmented Paper Stack</h3>
+                </div>
+                <ul className="space-y-4 text-xs font-bold text-slate-700">
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-red-600 font-black text-base leading-none">❌</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">Lost Timesheets & Erasures</strong>: Misplaced papers force manual recalculations, causing friction with attendants and missing record tracks.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-red-600 font-black text-base leading-none">❌</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">Manual Payroll Calculations</strong>: Hand-calculating EI, CPP, Income Tax, and 4% vacation accruals increases liability for CRA penalties.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-red-600 font-black text-base leading-none">❌</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">Pre-shift Callout Scrambles</strong>: Spending hours on group chats and phone tag when an attendant calls in sick 30 minutes before a transfer.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-red-600 font-black text-base leading-none">❌</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">Defenceless WSIB Audits</strong>: No written proof that a caregiver was trained on your ceiling lift sling loop colors during an injury dispute.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-red-600 font-black text-base leading-none">❌</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">Scattered Quarterly Receipts</strong>: Sorting through shoeboxes of physical receipts to justify expenditures to CILT or program auditors.</span>
+                  </li>
+                </ul>
               </div>
-              <ul className="space-y-4 text-xs font-bold text-slate-700">
-                <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-600 text-base leading-none">✓</span>
-                  <span><strong>Digitally Encrypted Logs</strong>: Caregivers check in on mobile; timesheets are securely locked down matching true work durations.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-600 text-base leading-none">✓</span>
-                  <span><strong>Automated ESA Wage Calculators</strong>: Calculations for gross wages, vacation pay, and CPP withholdings are computed automatically under federal rules.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-600 text-base leading-none">✓</span>
-                  <span><strong>1-Tap Emergency SOS</strong>: Immediate relief broadcast triggers SMS alerts to relief pools. Concurrency lock lets the first replier claim it.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-600 text-base leading-none">✓</span>
-                  <span><strong>Immutable Equipment Training Logs</strong>: Handover checklists and equipment training logs are digitally signed by caregivers inside their accounts.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-600 text-base leading-none">✓</span>
-                  <span><strong>1-Click Quarterly Audit Bundles</strong>: Instantly download compliant ledger logs with HST breakdowns and invoice references for quarterly reviews.</span>
-                </li>
-              </ul>
+
+              {/* The DirectCare Hub Way (Inner Card: White bg, Black text, Green checkmarks) */}
+              <div className="bg-white text-slate-900 rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-md">
+                <div className="flex items-center space-x-3 border-b border-slate-200 pb-4">
+                  <CheckCircle2 className="w-6 h-6 text-blue-600 shrink-0" />
+                  <h3 className="text-lg font-black uppercase tracking-wide text-blue-700">The DirectCare Hub Way</h3>
+                </div>
+                <ul className="space-y-4 text-xs font-bold text-slate-700">
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-emerald-600 font-black text-base leading-none">✓</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">Digitally Encrypted Logs</strong>: Caregivers check in on mobile; timesheets are securely locked down matching true work durations.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-emerald-600 font-black text-base leading-none">✓</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">Automated ESA Wage Calculators</strong>: Calculations for gross wages, vacation pay, and CPP withholdings are computed automatically under federal rules.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-emerald-600 font-black text-base leading-none">✓</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">1-Tap Emergency SOS</strong>: Immediate relief broadcast triggers SMS alerts to relief pools. Concurrency lock lets the first replier claim it.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-emerald-600 font-black text-base leading-none">✓</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">Immutable Equipment Training Logs</strong>: Handover checklists and equipment training logs are digitally signed by caregivers inside their accounts.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-emerald-600 font-black text-base leading-none">✓</span>
+                    <span className="text-slate-800"><strong className="text-slate-900">1-Click Quarterly Audit Bundles</strong>: Instantly download compliant ledger logs with HST breakdowns and invoice references for quarterly reviews.</span>
+                  </li>
+                </ul>
+              </div>
+
             </div>
 
           </div>
@@ -1167,44 +1183,44 @@ function HomeContent() {
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               We enforce strict data segregation. Caregivers check-in and read transfer runbooks on simple mobile interfaces. Employers oversee payroll from comprehensive managers logs.
             </p>
-            <div className="space-y-4 text-xs font-bold text-slate-700">
-              <div className="p-4 bg-white border border-slate-200 rounded-2xl flex items-start gap-3 group hover:bg-blue-600 hover:border-blue-600 transition duration-300">
-                <span className="w-2.5 h-2.5 bg-blue-600 rounded-full mt-1.5 shrink-0 group-hover:bg-white transition duration-300" />
+            <div className="space-y-4 text-xs font-bold text-white">
+              <div className="p-4 bg-[#155dfc] border border-blue-600 rounded-2xl flex items-start gap-3 text-white shadow-xs">
+                <span className="w-2.5 h-2.5 bg-white rounded-full mt-1.5 shrink-0" />
                 <div>
-                  <p className="font-extrabold text-slate-900 group-hover:text-white transition duration-300">Employer & Care-Manager Console</p>
-                  <p className="text-slate-500 font-medium text-[11px] mt-0.5 group-hover:text-blue-100 transition duration-300">Complete control over scheduling, care instructions, and authorized CILT bookkeeping ledger entries.</p>
+                  <p className="font-extrabold text-white">Employer & Care-Manager Console</p>
+                  <p className="text-blue-100 font-medium text-[11px] mt-0.5">Complete control over scheduling, care instructions, and authorized CILT bookkeeping ledger entries.</p>
                 </div>
               </div>
 
-              <div className="p-4 bg-white border border-slate-200 rounded-2xl flex items-start gap-3 group hover:bg-blue-600 hover:border-blue-600 transition duration-300">
-                <span className="w-2.5 h-2.5 bg-emerald-600 rounded-full mt-1.5 shrink-0 group-hover:bg-white transition duration-300" />
+              <div className="p-4 bg-[#155dfc] border border-blue-600 rounded-2xl flex items-start gap-3 text-white shadow-xs">
+                <span className="w-2.5 h-2.5 bg-emerald-300 rounded-full mt-1.5 shrink-0" />
                 <div>
-                  <p className="font-extrabold text-slate-900 group-hover:text-white transition duration-300">Attendant Mobile Portal</p>
-                  <p className="text-slate-500 font-medium text-[11px] mt-0.5 group-hover:text-blue-100 transition duration-300">Mobile-optimized check-in, equipment loop checklists, ambient voice handover memos, and receipt uploads.</p>
+                  <p className="font-extrabold text-white">Attendant Mobile Portal</p>
+                  <p className="text-blue-100 font-medium text-[11px] mt-0.5">Mobile-optimized check-in, equipment loop checklists, ambient voice handover memos, and receipt uploads.</p>
                 </div>
               </div>
 
-              <div className="p-4 bg-white border border-slate-200 rounded-2xl flex items-start gap-3 group hover:bg-blue-600 hover:border-blue-600 transition duration-300">
-                <span className="w-2.5 h-2.5 bg-purple-600 rounded-full mt-1.5 shrink-0 group-hover:bg-white transition duration-300" />
+              <div className="p-4 bg-[#155dfc] border border-blue-600 rounded-2xl flex items-start gap-3 text-white shadow-xs">
+                <span className="w-2.5 h-2.5 bg-purple-300 rounded-full mt-1.5 shrink-0" />
                 <div>
-                  <p className="font-extrabold text-slate-900 group-hover:text-white transition duration-300">Bookkeeper & Auditor Gate</p>
-                  <p className="text-slate-500 font-medium text-[11px] mt-0.5 group-hover:text-blue-100 transition duration-300">Authorized bookkeeping logs and payroll remittance sheets. Enforced privacy masks block bookkeepers from viewing bowel, bladder, or private health details.</p>
+                  <p className="font-extrabold text-white">Bookkeeper & Auditor Gate</p>
+                  <p className="text-blue-100 font-medium text-[11px] mt-0.5">Authorized bookkeeping logs and payroll remittance sheets. Enforced privacy masks block bookkeepers from viewing bowel, bladder, or private health details.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-6 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
-            <h3 className="text-base font-black text-slate-900 uppercase">Direct Funding Security Policy</h3>
-            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-xs text-slate-600 leading-relaxed space-y-3">
-              <p className="font-semibold text-slate-800">
+          <div className="lg:col-span-6 bg-[#155dfc] border border-blue-600 rounded-3xl p-6 sm:p-8 shadow-md space-y-6 text-white">
+            <h3 className="text-base font-black text-white uppercase">Direct Funding Security Policy</h3>
+            <div className="p-4 bg-blue-700/60 rounded-2xl border border-blue-400/40 text-xs text-white leading-relaxed space-y-3">
+              <p className="font-semibold text-white">
                 "By segregating clinical runbooks from financial remittances, DirectCare Hub protects both your medical dignity and your statutory employer liabilities."
               </p>
-              <p>
+              <p className="text-blue-100">
                 We do not upload physical healthcare files to public networks. Access control tokens are verified directly in Firestore Security Rules, preventing any crosstalk between your attendant staff and third-party accounting professionals.
               </p>
             </div>
-            <div className="flex items-center gap-3 text-xs text-slate-500 font-bold justify-between pt-2">
+            <div className="flex items-center gap-3 text-xs text-blue-100 font-bold justify-between pt-2">
               <span>✓ AES-256 Encrypted</span>
               <span>✓ HIPAA/AODA Compliant</span>
               <span>✓ SSL Encrypted Data</span>
@@ -1219,7 +1235,7 @@ function HomeContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           <div className="lg:col-span-7 space-y-6">
-            <span className="text-xs font-black bg-blue-700 uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-blue-500">
+            <span className="text-xs font-black bg-white text-black uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-slate-200 inline-block shadow-xs">
               Funding Allocation breakdown
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-none">
@@ -1229,31 +1245,31 @@ function HomeContent() {
               {provinceName}'s Direct Funding program (associated with {provinceBadge}) awards all participants an authorized monthly bookkeeping and administration allowance to run their household payroll.
             </p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold text-blue-50">
-              <div className="p-4 bg-blue-700/50 rounded-2xl border border-blue-500 group hover:bg-blue-900 hover:border-blue-700 transition duration-300">
-                <p className="text-white font-black text-sm group-hover:text-white transition">Monthly Admin Allowance</p>
-                <p className="text-blue-200 mt-1 group-hover:text-blue-100 transition">{provinceBadge} budgets fully support administrative and digital software costs to ensure localized employment standards compliance.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold">
+              <div className="p-4 bg-white text-slate-900 rounded-2xl border border-slate-200 shadow-sm group hover:bg-[#155dfc] hover:border-white hover:text-white transition duration-300">
+                <p className="font-black text-sm text-slate-900 group-hover:text-white transition">Monthly Admin Allowance</p>
+                <p className="text-slate-600 mt-1 group-hover:text-white transition font-medium">{provinceBadge} budgets fully support administrative and digital software costs to ensure localized employment standards compliance.</p>
               </div>
-              <div className="p-4 bg-blue-700/50 rounded-2xl border border-blue-500 group hover:bg-blue-900 hover:border-blue-700 transition duration-300">
-                <p className="text-white font-black text-sm group-hover:text-white transition">Compliant Monthly receipts</p>
-                <p className="text-blue-200 mt-1 group-hover:text-blue-100 transition">We provide formal invoices listing your unique {provinceBadge} Client ID and vendor codes, making reimbursement submission a simple 1-click step.</p>
+              <div className="p-4 bg-white text-slate-900 rounded-2xl border border-slate-200 shadow-sm group hover:bg-[#155dfc] hover:border-white hover:text-white transition duration-300">
+                <p className="font-black text-sm text-slate-900 group-hover:text-white transition">Compliant Monthly receipts</p>
+                <p className="text-slate-600 mt-1 group-hover:text-white transition font-medium">We provide formal invoices listing your unique {provinceBadge} Client ID and vendor codes, making reimbursement submission a simple 1-click step.</p>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-5 bg-white text-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-            <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">How to Claim Your Refund</h3>
-            <ol className="space-y-4 text-xs text-slate-600 font-bold">
-              <li className="flex gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">1</span>
+          <div className="lg:col-span-5 bg-white text-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 group hover:bg-[#155dfc] hover:text-white transition duration-300 border border-slate-200">
+            <h3 className="text-sm font-black text-slate-900 group-hover:text-white uppercase tracking-wider transition">How to Claim Your Refund</h3>
+            <ol className="space-y-4 text-xs text-slate-600 group-hover:text-white font-bold transition">
+              <li className="flex gap-2.5 items-start">
+                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 group-hover:bg-white group-hover:text-[#155dfc] font-extrabold flex items-center justify-center shrink-0 transition">1</span>
                 <span>Select any plan and input your unique {provinceBadge} program identification number during onboarding.</span>
               </li>
-              <li className="flex gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">2</span>
+              <li className="flex gap-2.5 items-start">
+                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 group-hover:bg-white group-hover:text-[#155dfc] font-extrabold flex items-center justify-center shrink-0 transition">2</span>
                 <span>At the end of each month, we auto-generate an itemized ledger receipt directly inside your Document Vault.</span>
               </li>
-              <li className="flex gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">3</span>
+              <li className="flex gap-2.5 items-start">
+                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 group-hover:bg-white group-hover:text-[#155dfc] font-extrabold flex items-center justify-center shrink-0 transition">3</span>
                 <span>Attach this receipt to your quarterly {provinceBadge} financial review statement to clear your bookkeeping budget line.</span>
               </li>
             </ol>
@@ -1267,7 +1283,9 @@ function HomeContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs font-black uppercase tracking-wider text-blue-600">Fair Transparent Plans</span>
+            <span className="text-xs font-black uppercase tracking-wider bg-[#155dfc] text-white px-3.5 py-1.5 rounded-full border border-blue-600 inline-block shadow-xs">
+              Fair Transparent Plans
+            </span>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Simple Pricing, Claimable under {provinceBadge}</h2>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
               Both plans are 100% claimable as authorized bookkeeping expenditures on your quarterly {provinceName} Direct Funding submissions.
@@ -1277,21 +1295,21 @@ function HomeContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             
             {/* Standard Plan */}
-            <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xs flex flex-col justify-between group hover:bg-blue-600 hover:border-blue-600 transition duration-300">
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col justify-between hover-pulsate-border">
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <span className="text-[10px] bg-slate-200 text-slate-700 font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider group-hover:bg-blue-700 group-hover:text-white transition">
+                  <span className="text-[10px] bg-slate-100 text-slate-800 font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-slate-200 inline-block">
                     Self-Manager Standard
                   </span>
-                  <h3 className="text-2xl font-black text-slate-900 group-hover:text-white transition">$29/mo</h3>
-                  <p className="text-xs font-bold text-slate-500 group-hover:text-blue-100 transition">$24/mo billed annually</p>
+                  <h3 className="text-2xl font-black text-black">$29/mo</h3>
+                  <p className="text-xs font-bold text-slate-600">$24/mo billed annually</p>
                 </div>
                 
-                <p className="text-xs text-slate-600 group-hover:text-blue-50 leading-relaxed font-bold transition">
+                <p className="text-xs text-slate-700 leading-relaxed font-bold">
                   Essential tools to schedule caregiver shifts, catalog mechanical transfer runbooks, and trigger backup SMS emergency coverages.
                 </p>
 
-                <ul className="space-y-3 text-xs font-bold text-slate-700 group-hover:text-white border-t border-slate-200 group-hover:border-blue-400 pt-4 transition">
+                <ul className="space-y-3 text-xs font-bold text-black border-t border-slate-200 pt-4">
                   <li className="flex items-center gap-2">✓ Dynamic Caregiver Roster</li>
                   <li className="flex items-center gap-2">✓ Attendant Mobile Access</li>
                   <li className="flex items-center gap-2">✓ Hoyer/Arjo Lift Runbooks</li>
@@ -1302,42 +1320,42 @@ function HomeContent() {
 
               <button
                 onClick={handleLaunchOrLogin}
-                className="mt-8 min-h-[48px] w-full bg-slate-800 hover:bg-slate-900 text-white group-hover:bg-white group-hover:text-blue-600 rounded-xl text-xs font-black transition cursor-pointer"
+                className="mt-8 min-h-[48px] w-full bg-[#155dfc] hover:bg-blue-700 text-white rounded-xl text-xs font-black transition cursor-pointer shadow-sm"
               >
                 Start 14-Day Free Trial
               </button>
             </div>
 
             {/* Pro Plan */}
-            <div className="bg-white border-2 border-blue-600 rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between relative group hover:bg-blue-600 hover:border-blue-600 transition duration-300">
-              <span className="absolute -top-3.5 right-6 text-[10px] bg-blue-600 text-white font-black px-3.5 py-1 rounded-full uppercase tracking-wider group-hover:bg-white group-hover:text-blue-600 transition">
+            <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between relative hover-pulsate-border">
+              <span className="absolute -top-3.5 right-6 text-[10px] bg-[#155dfc] text-white font-black px-3.5 py-1 rounded-full uppercase tracking-wider border border-blue-600 shadow-xs">
                 Most Popular for Audits
               </span>
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <span className="text-[10px] bg-blue-50 text-blue-800 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider group-hover:bg-blue-700 group-hover:text-white transition">
+                  <span className="text-[10px] bg-blue-50 text-blue-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-blue-200 inline-block">
                     Compliance & Bookkeeper Pro
                   </span>
-                  <h3 className="text-2xl font-black text-slate-900 group-hover:text-white transition">$49/mo</h3>
-                  <p className="text-xs font-bold text-slate-500 group-hover:text-blue-100 transition">$41/mo billed annually</p>
+                  <h3 className="text-2xl font-black text-black">$49/mo</h3>
+                  <p className="text-xs font-bold text-slate-600">$41/mo billed annually</p>
                 </div>
                 
-                <p className="text-xs text-slate-600 group-hover:text-blue-50 leading-relaxed font-bold transition">
+                <p className="text-xs text-slate-700 leading-relaxed font-bold">
                   Full CRA compliance automation including payroll withholding calculations, statutory vacation pay, and segregated auditor gates.
                 </p>
 
-                <ul className="space-y-3 text-xs font-bold text-slate-700 group-hover:text-white border-t border-slate-200 group-hover:border-blue-400 pt-4 transition">
+                <ul className="space-y-3 text-xs font-bold text-black border-t border-slate-200 pt-4">
                   <li className="flex items-center gap-2">✓ Everything in Standard</li>
-                  <li className="flex items-center gap-2 text-blue-700 group-hover:text-white">✓ CRA Paystub Deduction Calculators</li>
-                  <li className="flex items-center gap-2 text-blue-700 group-hover:text-white">✓ Non-Taxable Expense Receipts</li>
-                  <li className="flex items-center gap-2 text-blue-700 group-hover:text-white">✓ Automated CILT Quarterly Invoicing</li>
-                  <li className="flex items-center gap-2 text-blue-700 group-hover:text-white">✓ Restricted Bookkeeper Login Gate</li>
+                  <li className="flex items-center gap-2 text-blue-700">✓ CRA Paystub Deduction Calculators</li>
+                  <li className="flex items-center gap-2 text-blue-700">✓ Non-Taxable Expense Receipts</li>
+                  <li className="flex items-center gap-2 text-blue-700">✓ Automated CILT Quarterly Invoicing</li>
+                  <li className="flex items-center gap-2 text-blue-700">✓ Restricted Bookkeeper Login Gate</li>
                 </ul>
               </div>
 
               <button
                 onClick={handleLaunchOrLogin}
-                className="mt-8 min-h-[48px] w-full bg-blue-600 hover:bg-blue-700 text-white group-hover:bg-white group-hover:text-blue-600 rounded-xl text-xs font-black shadow-sm transition-transform hover:scale-[1.01] cursor-pointer"
+                className="mt-8 min-h-[48px] w-full bg-[#155dfc] hover:bg-blue-700 text-white rounded-xl text-xs font-black shadow-sm transition-transform hover:scale-[1.01] cursor-pointer"
               >
                 Get Started with Pro
               </button>
@@ -1389,42 +1407,42 @@ function HomeContent() {
       </section>
 
       {/* 9. ACCESSIBLE FOOTER */}
-      <footer className="bg-blue-900 py-12 border-t border-blue-950 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-xs font-bold text-blue-100">
+      <footer className="bg-[#155dfc] py-12 border-t border-blue-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-xs font-bold text-white">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-blue-850">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-blue-400/40">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black">
+                <div className="w-8 h-8 bg-white text-[#155dfc] rounded-lg flex items-center justify-center font-black">
                   <Shield className="w-4.5 h-4.5" />
                 </div>
                 <span className="text-sm font-black text-white">DirectCare Hub</span>
               </div>
-              <p className="text-[11px] text-blue-200 leading-relaxed max-w-sm">
+              <p className="text-[11px] text-white leading-relaxed max-w-sm font-normal">
                 A specialized, accessible administrative, care-scheduling, and T4 bookkeeping helper for self-managed individuals under CILT, CSIL, and SMC frameworks.
               </p>
             </div>
 
             <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-black uppercase text-blue-300">Canadian Program Links</p>
-              <a href="https://www.cilt.ca" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline text-blue-200">
+              <p className="text-[10px] font-black uppercase text-white tracking-wider">Canadian Program Links</p>
+              <a href="https://www.cilt.ca" target="_blank" rel="noopener noreferrer" className="hover:underline text-white font-normal">
                 Centre for Independent Living in Toronto (CILT)
               </a>
-              <a href="https://www.wsib.ca" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline text-blue-200">
+              <a href="https://www.wsib.ca" target="_blank" rel="noopener noreferrer" className="hover:underline text-white font-normal">
                 WSIB Ontario Compensation Board
               </a>
-              <a href="https://www.canada.ca/en/revenue-agency.html" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline text-blue-200">
+              <a href="https://www.canada.ca/en/revenue-agency.html" target="_blank" rel="noopener noreferrer" className="hover:underline text-white font-normal">
                 CRA Payroll Employers Guide
               </a>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px] text-blue-300">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px] text-white">
             <p>© {new Date().getFullYear()} DirectCare Hub. All Rights Reserved.</p>
             <div className="flex gap-4">
-              <a href="/privacy" className="hover:text-white hover:underline">Privacy Policy</a>
-              <a href="/terms" className="hover:text-white hover:underline">Terms of Service</a>
-              <span className="text-emerald-400">✓ AODA Compliant & Audited</span>
+              <a href="/privacy" className="hover:underline text-white font-normal">Privacy Policy</a>
+              <a href="/terms" className="hover:underline text-white font-normal">Terms of Service</a>
+              <span className="text-emerald-300 font-bold">✓ AODA Compliant & Audited</span>
             </div>
           </div>
 

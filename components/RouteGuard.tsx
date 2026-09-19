@@ -25,27 +25,26 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
   const router = useRouter();
   const { userProfile, loading } = useAuth();
-  const [authorized, setAuthorized] = useState(false);
-  const [checking, setChecking] = useState(true);
+  const [authorized, setAuthorized] = useState(true);
+
+  const isPublic = isPublicPath(pathname || "/");
 
   useEffect(() => {
-    // Prevent flicker on client side
-    const authCheck = () => {
-      const isPublic = isPublicPath(pathname || "/");
-      
-      if (!isPublic && !userProfile && !loading) {
-        setAuthorized(false);
-        router.push(`/login?redirect=${encodeURIComponent(pathname || "/")}`);
-      } else {
-        setAuthorized(true);
-      }
-      setChecking(false);
-    };
+    if (!isPublic && !userProfile && !loading) {
+      setAuthorized(false);
+      router.push(`/login?redirect=${encodeURIComponent(pathname || "/")}`);
+    } else {
+      setAuthorized(true);
+    }
+  }, [pathname, userProfile, loading, router, isPublic]);
 
-    authCheck();
-  }, [pathname, userProfile, loading, router]);
+  // Public paths bypass session verification completely
+  if (isPublic) {
+    return <>{children}</>;
+  }
 
-  if (checking || (loading && !isPublicPath(pathname || "/"))) {
+  // Non-public path and loading authentication
+  if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-3">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
@@ -54,7 +53,7 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
     );
   }
 
-  if (!authorized && !isPublicPath(pathname || "/")) {
+  if (!authorized || !userProfile) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 text-center space-y-4">
         <div className="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center text-rose-600 mx-auto">

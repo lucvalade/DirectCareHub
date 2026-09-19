@@ -78,26 +78,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signInWithEmail = async (email: string) => {
     setLoading(true);
-    // Simulate lookup in localStorage
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         if (typeof window !== "undefined") {
-          const stored = localStorage.getItem(`directcare_profile_${email}`);
+          const stored = localStorage.getItem(`directcare_profile_${email.toLowerCase()}`);
           if (stored) {
-            const parsed = JSON.parse(stored);
-            setUserProfile(parsed);
-            localStorage.setItem("directcare_active_user", JSON.stringify(parsed));
+            try {
+              const parsed = JSON.parse(stored);
+              setUserProfile(parsed);
+              localStorage.setItem("directcare_active_user", JSON.stringify(parsed));
+              setLoading(false);
+              resolve();
+              return;
+            } catch (e) {
+              console.error("Failed to parse saved profile:", e);
+            }
+          }
+
+          // Check if matches a demo user
+          const matchedDemo = Object.values(DEMO_USERS).find(
+            (u) => u.email.toLowerCase() === email.toLowerCase()
+          );
+          if (matchedDemo) {
+            setUserProfile(matchedDemo);
+            localStorage.setItem("directcare_active_user", JSON.stringify(matchedDemo));
             setLoading(false);
             resolve();
-          } else {
-            setLoading(false);
-            reject(new Error("profile_not_found"));
+            return;
           }
+
+          // Auto-generate profile for new email address seamlessly
+          const namePart = email.includes("@") ? email.split("@")[0] : email;
+          const formattedName = namePart.replace(/[._]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+          const newProfile: UserProfile = {
+            uid: `usr_${Math.random().toString(36).substr(2, 9)}`,
+            email: email,
+            displayName: formattedName || "Direct Funding Employer",
+            role: "employer",
+            hourlyRate: 23.50,
+            phone: "416-555-0100",
+            emergencyContact: "Primary Account"
+          };
+
+          localStorage.setItem(`directcare_profile_${email.toLowerCase()}`, JSON.stringify(newProfile));
+          localStorage.setItem("directcare_active_user", JSON.stringify(newProfile));
+          setUserProfile(newProfile);
+          setLoading(false);
+          resolve();
         } else {
           setLoading(false);
           resolve();
         }
-      }, 600);
+      }, 400);
     });
   };
 
