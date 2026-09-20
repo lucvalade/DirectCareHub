@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for auth & RBAC
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isRole(role) {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserData().role == role;
+    }
+
+    function isEmployer() {
+      return isRole('employer');
+    }
+
+    function isAttendant() {
+      return isRole('attendant');
+    }
+
+    function isAuditor() {
+      return isRole('auditor');
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 1. User Profiles Collection
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && (
+        (request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])) ||
+        isEmployer()
+      );
+    }
+
+    // 2. Care Shifts Collection
+    match /shifts/{shiftId} {
+      // Employer can read their own shifts; PSWs can read assigned or open/SOS shifts; Auditor can read all
+      allow read: if isSignedIn() && (
+        isAuditor() ||
+        (isEmployer() && resource.data.employerId == request.auth.uid) ||
+        (isAttendant() && (resource.data.attendantId == request.auth.uid || resource.data.status in ['open', 'sos_active']))
+      );
+
+      // Employers create/manage shifts
+      allow create: if isEmployer() && request.resource.data.employerId == request.auth.uid;
+
+      // Employers have full update access; Assigned PSWs can update runbook execution tasks and status
+      allow update: if isSignedIn() && (
+        (isEmployer() && resource.data.employerId == request.auth.uid) ||
+        (isAttendant() && resource.data.attendantId == request.auth.uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'runbookTasks', 'updatedAt']))
+      );
+
+      allow delete: if isEmployer() && resource.data.employerId == request.auth.uid;
+
+      // 2a. Shift Bids Subcollection
+      match /bids/{bidId} {
+        allow read: if isSignedIn() && (
+          isAuditor() ||
+          (isEmployer() && get(/databases/$(database)/documents/shifts/$(shiftId)).data.employerId == request.auth.uid) ||
+          (isAttendant() && resource.data.pswId == request.auth.uid)
+        );
+
+        allow create: if isAttendant() && request.resource.data.pswId == request.auth.uid;
+
+        allow update: if isEmployer() && get(/databases/$(database)/documents/shifts/$(shiftId)).data.employerId == request.auth.uid;
+        allow delete: if isEmployer() || (isAttendant() && resource.data.pswId == request.auth.uid);
+      }
+    }
+
+    // 3. Quarterly CILT/CSIL Budgets Collection
+    match /budgets/{budgetId} {
+      allow read: if isSignedIn() && (
+        isAuditor() ||
+        (isEmployer() && resource.data.employerId == request.auth.uid)
+      );
+
+      allow write: if isEmployer() && (
+        request.resource.data.employerId == request.auth.uid
+      );
+    }
+
+    // 4. Payroll Runs & Tax Remittances Collection
+    match /payroll_runs/{payrollRunId} {
+      allow read: if isSignedIn() && (
+        isAuditor() ||
+        (isEmployer() && resource.data.employerId == request.auth.uid)
+      );
+
+      allow write: if isEmployer() && (
+        request.resource.data.employerId == request.auth.uid
+      );
+    }
+
+    // 5. Immutable Compliance Audit Logs Collection
+    match /compliance_audit_logs/{logId} {
+      // Read-only access for Employers and Provincial Auditors
+      allow read: if isSignedIn() && (isAuditor() || isEmployer());
+
+      // STRICT REQUIREMENT: Client-side write access is strictly blocked to ensure audit trail immutability.
+      // All compliance audit writes MUST occur server-side via Firebase Admin SDK.
+      allow write: if false;
+    }
+  }
+}

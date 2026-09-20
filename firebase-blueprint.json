@@ -1,0 +1,134 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User identity and role definition (Employer, Attendant/PSW, Auditor)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["employer", "attendant", "auditor"] },
+        "province": { "type": "string", "enum": ["ON", "BC", "AB"] },
+        "programType": { "type": "string", "enum": ["CILT", "CSIL", "SMC"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Shift": {
+      "title": "Care Shift",
+      "description": "Scheduled or emergency care shift with runbook tasks and provincial overtime metrics",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "employerId": { "type": "string" },
+        "attendantId": { "type": "string" },
+        "attendantName": { "type": "string" },
+        "date": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "hours": { "type": "number" },
+        "hourlyRate": { "type": "number" },
+        "status": { "type": "string", "enum": ["scheduled", "in_progress", "completed", "sos_active", "open"] },
+        "province": { "type": "string", "enum": ["ON", "BC", "AB"] },
+        "programType": { "type": "string", "enum": ["CILT", "CSIL", "SMC"] },
+        "isOvertimeWarning": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["employerId", "date", "status", "province"]
+    },
+    "ShiftBid": {
+      "title": "Shift Bid",
+      "description": "Relief attendant bid on open or SOS shifts",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "shiftId": { "type": "string" },
+        "pswId": { "type": "string" },
+        "pswName": { "type": "string" },
+        "bidStatus": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["shiftId", "pswId", "bidStatus"]
+    },
+    "Budget": {
+      "title": "Quarterly CILT/CSIL Budget",
+      "description": "Quarterly CILT/CSIL allocation, disbursed funds, and remaining burn rate",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "employerId": { "type": "string" },
+        "quarter": { "type": "string" },
+        "allocatedAmount": { "type": "number" },
+        "disbursedAmount": { "type": "number" },
+        "remainingBalance": { "type": "number" },
+        "province": { "type": "string", "enum": ["ON", "BC", "AB"] },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["employerId", "quarter", "allocatedAmount"]
+    },
+    "PayrollRun": {
+      "title": "Payroll Run & CRA Remittance",
+      "description": "Bi-weekly pay period disbursement and CRA remittance breakdown (CPP, EI, Income Tax)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "employerId": { "type": "string" },
+        "payPeriodStart": { "type": "string" },
+        "payPeriodEnd": { "type": "string" },
+        "totalGrossPay": { "type": "number" },
+        "cppRemittance": { "type": "number" },
+        "eiRemittance": { "type": "number" },
+        "incomeTaxRemittance": { "type": "number" },
+        "overtimeHours": { "type": "number" },
+        "isFinalized": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["employerId", "payPeriodStart", "payPeriodEnd", "totalGrossPay"]
+    },
+    "ComplianceAuditLog": {
+      "title": "Immutable Compliance Audit Log",
+      "description": "Server-side immutable log of runbook completions, Arjo lift transfers, and CRA transactions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventType": { "type": "string" },
+        "entityId": { "type": "string" },
+        "performedBy": { "type": "string" },
+        "role": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "details": { "type": "string" }
+      },
+      "required": ["eventType", "performedBy", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles with role declarations"
+    },
+    "/shifts/{shiftId}": {
+      "schema": "Shift",
+      "description": "Care shift records and SOS dispatches"
+    },
+    "/shifts/{shiftId}/bids/{bidId}": {
+      "schema": "ShiftBid",
+      "description": "PSW shift bidding subcollection"
+    },
+    "/budgets/{budgetId}": {
+      "schema": "Budget",
+      "description": "Quarterly provincial budget allocations"
+    },
+    "/payroll_runs/{payrollRunId}": {
+      "schema": "PayrollRun",
+      "description": "Bi-weekly payroll disbursements and tax remittances"
+    },
+    "/compliance_audit_logs/{logId}": {
+      "schema": "ComplianceAuditLog",
+      "description": "Server-side immutable audit logs (client write strictly blocked)"
+    }
+  }
+}

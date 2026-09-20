@@ -7,6 +7,7 @@ import {
   Shield, 
   LayoutDashboard, 
   ClipboardList, 
+  Calendar as CalendarIcon,
   Banknote, 
   Users, 
   FolderLock, 
@@ -123,6 +124,7 @@ export default function Navbar({
 
   // Active states
   const isDashboardActive = pathname === "/" && (!activeTab || activeTab === "overview");
+  const isCalendarActive = pathname?.startsWith("/calendar") || pathname?.startsWith("/shifts");
   const isProtocolsActive = pathname?.startsWith("/protocols");
   const isPayrollActive = pathname?.startsWith("/payroll") || pathname?.startsWith("/timesheets");
   const isAttendantsActive = pathname?.startsWith("/attendants");
@@ -183,6 +185,19 @@ export default function Navbar({
           >
             <LayoutDashboard className={`w-4 h-4 ${isDashboardActive ? "text-blue-600" : "text-slate-500"}`} />
             <span>Dashboard</span>
+          </Link>
+
+          {/* 2. Shared Calendar */}
+          <Link
+            href="/calendar"
+            className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
+              isCalendarActive
+                ? "bg-blue-50 text-blue-700 font-extrabold"
+                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+            }`}
+          >
+            <CalendarIcon className={`w-4 h-4 ${isCalendarActive ? "text-blue-600" : "text-slate-500"}`} />
+            <span>Shared Calendar</span>
           </Link>
 
           {/* 2. Care Protocols */}
@@ -435,6 +450,17 @@ export default function Navbar({
             >
               <LayoutDashboard className="w-4.5 h-4.5 text-blue-600" />
               <span>Dashboard Overview</span>
+            </Link>
+
+            <Link
+              href="/calendar"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition cursor-pointer ${
+                isCalendarActive ? "bg-blue-50 text-blue-700 font-extrabold" : "bg-slate-50 hover:bg-slate-100 text-slate-800"
+              }`}
+            >
+              <CalendarIcon className="w-4.5 h-4.5 text-blue-600" />
+              <span>Shared Care Calendar</span>
             </Link>
 
             <Link

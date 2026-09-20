@@ -5,11 +5,11 @@ import { Wifi, WifiOff, CloudUpload, User, ShieldCheck } from 'lucide-react';
 
 interface HeaderProps {
   attendantName: string;
-  isGpsActive: boolean;
+  isGpsActive?: boolean;
   distanceToClient?: number;
 }
 
-export default function PswMobileNavHeader({ attendantName, isGpsActive, distanceToClient }: HeaderProps) {
+export default function PswMobileNavHeader({ attendantName, isGpsActive = true, distanceToClient }: HeaderProps) {
   const [isOnline, setIsOnline] = useState(true);
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
 
