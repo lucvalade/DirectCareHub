@@ -3,9 +3,9 @@ import webpush from 'web-push';
 import { adminDb } from '@/lib/firebase-admin';
 
 const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 
-  'BEl62iUYgUivxIkv69yViEuiBIa40yY1sK4_7m7o6yB97S5I3w123456789abcdefghijklmnopqrstuvwxyz';
+  'BKgjeitAV81NnpHGdvBtHe_V8sowXWzjqsEPPT7_nNyDr6QerS3ZGN6O6YEv1XuZWchYWGuCwLhwETuQn1jB9gM';
 const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY || 
-  's123456789abcdefghijklmnopqrstuvwxyz12345';
+  '_tRIZTmFmYriVRvPt4T4IfyXoy3fO0OHxfCrAZESbmY';
 
 try {
   webpush.setVapidDetails(

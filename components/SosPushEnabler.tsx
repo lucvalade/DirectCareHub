@@ -6,7 +6,7 @@ import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebaseConfig';
 
 const VAPID_PUBLIC_KEY = (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string) || 
-  'BEl62iUYgUivxIkv69yViEuiBIa40yY1sK4_7m7o6yB97S5I3w123456789abcdefghijklmnopqrstuvwxyz';
+  'BKgjeitAV81NnpHGdvBtHe_V8sowXWzjqsEPPT7_nNyDr6QerS3ZGN6O6YEv1XuZWchYWGuCwLhwETuQn1jB9gM';
 
 // Helper to convert VAPID string for the PushManager
 function urlBase64ToUint8Array(base64String: string) {

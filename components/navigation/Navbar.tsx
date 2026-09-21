@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import EmergencySosButton from "./EmergencySosButton";
+import ComingSoonModal from "@/components/ComingSoonModal";
 
 interface NavbarProps {
   userRole?: string;
@@ -49,6 +50,7 @@ export default function Navbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [payrollDropdownOpen, setPayrollDropdownOpen] = useState(false);
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const payrollRef = useRef<HTMLDivElement>(null);
@@ -298,9 +300,19 @@ export default function Navbar({
           </Link>
         </div>
 
-        {/* Right: Emergency SOS & Profile Dropdown */}
-        <div className="flex items-center space-x-3 shrink-0">
+        {/* Right: Emergency SOS & Early Access & Profile Dropdown */}
+        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
           
+          {/* Early Access / Coming Soon Trigger */}
+          <button
+            onClick={() => setComingSoonOpen(true)}
+            className="min-h-[44px] px-3 py-1.5 bg-gradient-to-r from-blue-900 to-indigo-900 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm"
+            title="Request Beta Priority Access"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <span className="hidden sm:inline">Early Access</span>
+          </button>
+
           {/* Emergency SOS */}
           {(isEmployer || isAttendant) && (
             <EmergencySosButton
@@ -576,6 +588,9 @@ export default function Navbar({
 
         </div>
       )}
+
+      {/* Early Access Coming Soon Modal */}
+      <ComingSoonModal isOpen={comingSoonOpen} onClose={() => setComingSoonOpen(false)} />
 
     </nav>
   );
