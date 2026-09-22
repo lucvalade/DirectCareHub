@@ -62,7 +62,14 @@ service cloud.firestore {
 
       allow delete: if isEmployer() && resource.data.employerId == request.auth.uid;
 
-      // 2a. Shift Bids Subcollection
+      // 2a. Tasks Subcollection
+      match /tasks/{taskId} {
+        allow read: if isSignedIn();
+        allow create, update: if isSignedIn();
+        allow delete: if isEmployer();
+      }
+
+      // 2b. Shift Bids Subcollection
       match /bids/{bidId} {
         allow read: if isSignedIn() && (
           isAuditor() ||

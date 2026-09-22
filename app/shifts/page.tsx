@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import NavigationHeader from '@/components/NavigationHeader';
+import GeofenceArrivalTracker from '@/components/GeofenceArrivalTracker';
+import ShiftBiddingCard from '@/components/ShiftBiddingCard';
+import EmployerBidReview from '@/components/EmployerBidReview';
+import AudioHandoverRecorder from '@/components/AudioHandoverRecorder';
 import { useAuth } from '@/context/AuthContext';
 import { 
   Radio, 
@@ -175,6 +179,64 @@ export default function ShiftsPage() {
               )}
             </button>
           </div>
+        </div>
+
+        {/* Live GPS Geofence Arrival Tracker */}
+        {!isClockedIn && (
+          <GeofenceArrivalTracker 
+            shiftId="demo_active_shift_1"
+            attendantId={userProfile?.uid || "psw_1"}
+            employerCoords={{ lat: 43.2557, lng: -79.8711 }} // Hamilton, ON coordinate
+          />
+        )}
+
+        {/* Open Relief Shifts Bidding Pool */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-black text-slate-900">Open Relief Shifts • Open for Bidding</h2>
+            <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+              Approved Relief Pool
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ShiftBiddingCard 
+              shiftId="shift_bidding_open_01"
+              attendantId={userProfile?.uid || "psw_1"}
+              date="Friday, Sep 25, 2026"
+              timeRange="08:00 AM - 04:00 PM (8.0 hrs)"
+              hourlyRate={28.50}
+            />
+            <ShiftBiddingCard 
+              shiftId="shift_bidding_open_02"
+              attendantId={userProfile?.uid || "psw_1"}
+              date="Saturday, Sep 26, 2026"
+              timeRange="04:00 PM - 11:00 PM (7.0 hrs)"
+              hourlyRate={30.00}
+            />
+          </div>
+        </div>
+
+        {/* Employer Shift Bid Review Panel */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-black text-slate-900">Employer Bid Management • Accept Relief Bids</h2>
+            <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
+              Live Bid Queue
+            </span>
+          </div>
+          <EmployerBidReview shiftId="shift_bidding_open_01" />
+        </div>
+
+        {/* End-of-Shift Offline Voice Handover Recorder */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-black text-slate-900">End-of-Shift Voice Handover • Offline Ready</h2>
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              IndexedDB Local Storage
+            </span>
+          </div>
+          <AudioHandoverRecorder shiftId="shift_bidding_open_01" />
         </div>
 
         {/* Shift Tasks Agenda */}

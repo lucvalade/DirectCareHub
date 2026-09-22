@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import NavigationHeader from '@/components/NavigationHeader';
+import EmployerRunbookDashboard from '@/components/EmployerRunbookDashboard';
 import { 
   ShieldAlert, 
   HeartPulse, 
@@ -114,6 +115,9 @@ export default function ProtocolsDashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Live Employer Care Runbook Dashboard (Real-Time Firestore Listener) */}
+        <EmployerRunbookDashboard activeShiftId="demo_active_shift_1" />
 
         {/* Filter Pills */}
         <div className="flex flex-wrap gap-2">

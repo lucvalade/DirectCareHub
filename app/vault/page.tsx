@@ -8,6 +8,7 @@ import UploadDocumentModal from "@/components/vault/UploadDocumentModal";
 import SignDocumentModal from "@/components/vault/SignDocumentModal";
 import { getVaultDocuments, addVaultDocument, signVaultDocument } from "@/app/actions/vault";
 import { VaultDocument } from "@/types/vault";
+import AuditExportButton from "@/components/AuditExportButton";
 import { FileCheck2, Plus, ShieldCheck, AlertTriangle, RefreshCw, X, EyeOff } from "lucide-react";
 
 export default function VaultCommandCenterPage() {
@@ -105,14 +106,21 @@ export default function VaultCommandCenterPage() {
           </div>
 
           {(userRole === "employer" || userRole === "bookkeeper") && (
-            <button
-              type="button"
-              onClick={() => setUploadModalOpen(true)}
-              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm flex items-center space-x-2 transition cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Upload Document</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <AuditExportButton 
+                employerId={currentUserId} 
+                qStart="2026-07-01" 
+                qEnd="2026-09-30" 
+              />
+              <button
+                type="button"
+                onClick={() => setUploadModalOpen(true)}
+                className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm flex items-center space-x-2 transition cursor-pointer min-h-[48px]"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Upload Document</span>
+              </button>
+            </div>
           )}
         </div>
 

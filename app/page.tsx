@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import NavigationHeader from "@/components/NavigationHeader";
+import SosResolutionListener from "@/components/SosResolutionListener";
 import { 
   ShieldCheck, 
   Clock, 
@@ -402,6 +403,7 @@ function HomeContent() {
   if (showDashboard) {
     return (
       <div className="min-h-screen bg-slate-100 flex flex-col">
+        <SosResolutionListener activeShiftId="demo_active_shift_1" employerId="employer_1" />
         <NavigationHeader activeTab={activeTab} onSelectTab={(tab) => setActiveTab(tab)} />
 
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-in fade-in duration-300">

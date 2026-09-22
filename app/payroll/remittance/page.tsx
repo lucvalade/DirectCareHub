@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import NavigationHeader from '@/components/NavigationHeader';
+import BudgetAlertBanner from '@/components/BudgetAlertBanner';
 import { 
   Landmark, 
   Calendar, 
@@ -157,6 +158,14 @@ export default function RemittancePage() {
             </button>
           </div>
         </div>
+
+        {/* Quarterly Care Budget Burn-Rate Alert Banner */}
+        <BudgetAlertBanner 
+          allocated={28500} 
+          spent={18420} 
+          status="warning" 
+          projectedDate="September 28, 2026" 
+        />
 
         {/* Interactive Configuration Bar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs text-xs font-bold">

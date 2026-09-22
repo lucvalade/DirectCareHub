@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import NavigationHeader from "@/components/NavigationHeader";
+import { IntegratedWageStatementViewer } from "@/components/CompleteDirectDepositAndPayrollMaster";
 import { fetchPayStubs, createPayRun } from "@/app/actions/payroll";
 import { PayRunResult } from "@/lib/payrollEngine";
 import { useAuth } from "@/context/AuthContext";
@@ -347,6 +348,19 @@ export default function PayStubsPage() {
               <span>New Bi-Weekly Pay Run</span>
             </button>
             
+            {/* Download PDF button calling our CRA Overtime PDF generator route */}
+            {selectedStub && (
+              <a
+                href={`/api/export/payroll-pdf?name=${encodeURIComponent(selectedStub.attendant_name || 'Elena Rostova')}&rate=${selectedStub.hourly_rate}&hours=${selectedStub.hours_worked}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="min-h-[44px] px-4 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center space-x-2 transition cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export Overtime Paystub PDF</span>
+              </a>
+            )}
+
             {/* Print Statement Button (Fixed to hide rest of page) */}
             <button
               type="button"
@@ -1099,6 +1113,11 @@ export default function PayStubsPage() {
           </div>
         </div>
       )}
+
+      {/* Master CPA 005 Direct Deposit, Reversal & Itemized Wage Suite */}
+      <div className="pt-8 border-t border-slate-200">
+        <IntegratedWageStatementViewer />
+      </div>
 
     </div>
   );

@@ -50,7 +50,7 @@ export default function Navbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [payrollDropdownOpen, setPayrollDropdownOpen] = useState(false);
-  const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [comingSoonOpen, setComingSoonOpen] = useState(true);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const payrollRef = useRef<HTMLDivElement>(null);
@@ -267,6 +267,13 @@ export default function Navbar({
                 >
                   <span className="w-4 text-center">📊</span> Year-End T4 & ROE Hub
                 </Link>
+                <Link
+                  href="/master-suite"
+                  onClick={() => setPayrollDropdownOpen(false)}
+                  className="px-4 py-2.5 text-xs text-blue-700 bg-blue-50/50 hover:bg-blue-50 font-bold flex items-center gap-2 border-t border-slate-100"
+                >
+                  <span className="w-4 text-center">🛡️</span> Master Compliance Suite
+                </Link>
               </div>
             )}
           </div>
@@ -298,6 +305,16 @@ export default function Navbar({
             <FolderLock className={`w-4 h-4 ${isVaultActive ? "text-blue-600" : "text-slate-500"}`} />
             <span>Vault</span>
           </Link>
+
+          {/* 6. Coming Soon Link */}
+          <button
+            type="button"
+            onClick={() => setComingSoonOpen(true)}
+            className="min-h-[48px] px-3.5 rounded-xl text-xs font-bold text-[#155dfc] hover:bg-blue-50 transition flex items-center space-x-1.5 cursor-pointer border border-blue-200/60 bg-blue-50/50"
+          >
+            <Sparkles className="w-4 h-4 text-[#155dfc] animate-pulse" />
+            <span className="font-extrabold">Coming Soon</span>
+          </button>
         </div>
 
         {/* Right: Emergency SOS & Early Access & Profile Dropdown */}
@@ -558,6 +575,18 @@ export default function Navbar({
               <FolderLock className="w-4.5 h-4.5 text-blue-600" />
               <span>Secure Document Vault</span>
             </Link>
+
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setComingSoonOpen(true);
+              }}
+              className="w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-[#155dfc] font-extrabold transition cursor-pointer"
+            >
+              <Sparkles className="w-4.5 h-4.5 text-[#155dfc] animate-pulse" />
+              <span>Coming Soon</span>
+            </button>
 
           </div>
 
