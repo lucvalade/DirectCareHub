@@ -50,7 +50,7 @@ export default function Navbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [payrollDropdownOpen, setPayrollDropdownOpen] = useState(false);
-  const [comingSoonOpen, setComingSoonOpen] = useState(true);
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const payrollRef = useRef<HTMLDivElement>(null);

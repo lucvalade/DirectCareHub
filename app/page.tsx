@@ -8,6 +8,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import NavigationHeader from "@/components/NavigationHeader";
 import SosResolutionListener from "@/components/SosResolutionListener";
+import PricingSection from "@/components/PricingSection";
 import { 
   ShieldCheck, 
   Clock, 
@@ -1281,92 +1282,9 @@ function HomeContent() {
       </section>
 
       {/* 7. SIMPLE, TRANSPARENT PRICING CARDS */}
-      <section id="pricing-section" className="py-16 lg:py-24 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
-          <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs font-black uppercase tracking-wider bg-[#155dfc] text-white px-3.5 py-1.5 rounded-full border border-blue-600 inline-block shadow-xs">
-              Fair Transparent Plans
-            </span>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Simple Pricing, Claimable under {provinceBadge}</h2>
-            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-              Both plans are 100% claimable as authorized bookkeeping expenditures on your quarterly {provinceName} Direct Funding submissions.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            
-            {/* Standard Plan */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col justify-between hover-pulsate-border">
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <span className="text-[10px] bg-slate-100 text-slate-800 font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-slate-200 inline-block">
-                    Self-Manager Standard
-                  </span>
-                  <h3 className="text-2xl font-black text-black">$29/mo</h3>
-                  <p className="text-xs font-bold text-slate-600">$24/mo billed annually</p>
-                </div>
-                
-                <p className="text-xs text-slate-700 leading-relaxed font-bold">
-                  Essential tools to schedule caregiver shifts, catalog mechanical transfer runbooks, and trigger backup SMS emergency coverages.
-                </p>
-
-                <ul className="space-y-3 text-xs font-bold text-black border-t border-slate-200 pt-4">
-                  <li className="flex items-center gap-2">✓ Dynamic Caregiver Roster</li>
-                  <li className="flex items-center gap-2">✓ Attendant Mobile Access</li>
-                  <li className="flex items-center gap-2">✓ Hoyer/Arjo Lift Runbooks</li>
-                  <li className="flex items-center gap-2">✓ Emergency SOS SMS Alerts</li>
-                  <li className="flex items-center gap-2">✓ Secure 6-Year Vault Storage</li>
-                </ul>
-              </div>
-
-              <button
-                onClick={handleLaunchOrLogin}
-                className="mt-8 min-h-[48px] w-full bg-[#155dfc] hover:bg-blue-700 text-white rounded-xl text-xs font-black transition cursor-pointer shadow-sm"
-              >
-                Start 14-Day Free Trial
-              </button>
-            </div>
-
-            {/* Pro Plan */}
-            <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between relative hover-pulsate-border">
-              <span className="absolute -top-3.5 right-6 text-[10px] bg-[#155dfc] text-white font-black px-3.5 py-1 rounded-full uppercase tracking-wider border border-blue-600 shadow-xs">
-                Most Popular for Audits
-              </span>
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <span className="text-[10px] bg-blue-50 text-blue-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-blue-200 inline-block">
-                    Compliance & Bookkeeper Pro
-                  </span>
-                  <h3 className="text-2xl font-black text-black">$49/mo</h3>
-                  <p className="text-xs font-bold text-slate-600">$41/mo billed annually</p>
-                </div>
-                
-                <p className="text-xs text-slate-700 leading-relaxed font-bold">
-                  Full CRA compliance automation including payroll withholding calculations, statutory vacation pay, and segregated auditor gates.
-                </p>
-
-                <ul className="space-y-3 text-xs font-bold text-black border-t border-slate-200 pt-4">
-                  <li className="flex items-center gap-2">✓ Everything in Standard</li>
-                  <li className="flex items-center gap-2 text-blue-700">✓ CRA Paystub Deduction Calculators</li>
-                  <li className="flex items-center gap-2 text-blue-700">✓ Non-Taxable Expense Receipts</li>
-                  <li className="flex items-center gap-2 text-blue-700">✓ Automated CILT Quarterly Invoicing</li>
-                  <li className="flex items-center gap-2 text-blue-700">✓ Restricted Bookkeeper Login Gate</li>
-                </ul>
-              </div>
-
-              <button
-                onClick={handleLaunchOrLogin}
-                className="mt-8 min-h-[48px] w-full bg-[#155dfc] hover:bg-blue-700 text-white rounded-xl text-xs font-black shadow-sm transition-transform hover:scale-[1.01] cursor-pointer"
-              >
-                Get Started with Pro
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
+      <div id="pricing-section" className="bg-[#020617] py-10 border-y border-white/10">
+        <PricingSection />
+      </div>
 
       {/* 8. FREQUENTLY ASKED QUESTIONS */}
       <section id="faq-section" className="py-16 lg:py-24 bg-slate-50 border-b border-slate-200">

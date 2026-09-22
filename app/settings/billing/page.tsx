@@ -26,11 +26,11 @@ interface BillingSettingsProps {
 }
 
 const DEFAULT_SUBSCRIPTION = {
-  planName: "Compliance & Bookkeeper Pro",
+  planName: "Compliance & Direct Deposit",
   billingCycle: "monthly" as const,
   status: "active" as const,
   currentPeriodEnd: "2026-10-14T00:00:00Z",
-  monthlyCostCad: 49.00
+  monthlyCostCad: 89.00
 };
 
 const DEFAULT_RECEIPTS: CiltReceipt[] = [
@@ -38,9 +38,9 @@ const DEFAULT_RECEIPTS: CiltReceipt[] = [
     id: "tx_9a81c2",
     invoice_number: "INV-2026-0914",
     payment_date: "2026-09-14",
-    subtotal: 43.36,
-    ontario_hst_13: 5.64,
-    total_paid_cad: 49.00,
+    subtotal: 78.76,
+    ontario_hst_13: 10.24,
+    total_paid_cad: 89.00,
     payment_method: "Visa",
     last4: "4242"
   },
