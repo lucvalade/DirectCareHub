@@ -2,7 +2,7 @@
 // Project: DirectCare Hub - "Coming Soon" Early Access Modal & Action Suite
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { 
   Sparkles, 
@@ -16,6 +16,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { submitWaitlistRegistrationAction } from '@/lib/serverActions';
 
 // Helper function to capitalize the first letter of each word
 const toTitleCase = (str: string) => {
@@ -52,19 +53,47 @@ const PROVINCE_PROGRAM_OPTIONS = [
 interface ComingSoonModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onProvinceSelected?: (provinceProgram: string) => void;
 }
 
-export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProps) {
+export default function ComingSoonModal({ isOpen, onClose, onProvinceSelected }: ComingSoonModalProps) {
   const [formData, setFormData] = useState<WaitlistFormData>({
     email: '',
     role: 'employer',
     fullName: '',
-    provinceProgram: '',
+    provinceProgram: 'Ontario (CILT)',
   });
 
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState('');
+  const [storedRecord, setStoredRecord] = useState<any>(null);
+
+  // Auto-detect browser timezone to pre-select Province/Program
+  useEffect(() => {
+    try {
+      const existing = typeof window !== 'undefined' ? localStorage.getItem('directcare_waitlist_submission') : null;
+      if (existing) {
+        const parsed = JSON.parse(existing);
+        setStoredRecord(parsed);
+      }
+
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone.toLowerCase();
+      let detectedProgram = "Ontario (CILT)";
+      if (tz.includes("vancouver") || tz.includes("victoria")) {
+        detectedProgram = "British Columbia (CSIL)";
+      } else if (tz.includes("edmonton") || tz.includes("calgary")) {
+        detectedProgram = "Alberta (SMC / FMS)";
+      } else if (tz.includes("winnipeg")) {
+        detectedProgram = "Manitoba (In the Company of Friends)";
+      } else if (tz.includes("halifax")) {
+        detectedProgram = "Nova Scotia (Self-Managed Care)";
+      }
+      setFormData(prev => ({ ...prev, provinceProgram: prev.provinceProgram || detectedProgram }));
+    } catch {
+      // Fallback to default
+    }
+  }, []);
 
   if (!isOpen) return null;
 
@@ -72,6 +101,15 @@ export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProp
     const rawValue = e.target.value;
     const formattedValue = toTitleCase(rawValue);
     setFormData((prev) => ({ ...prev, fullName: formattedValue }));
+  };
+
+  const handleUnlockAccess = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('directcare_access_unlocked', 'true');
+      localStorage.setItem('directcare_waitlist_submitted', 'true');
+    }
+    toast.success('Welcome Luc! DirectCare Hub access unlocked.');
+    onClose();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,10 +124,58 @@ export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProp
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate write
+      const record = {
+        email: formData.email,
+        role: formData.role,
+        fullName: formData.fullName || '',
+        provinceProgram: formData.provinceProgram,
+        submittedAt: new Date().toISOString(),
+        browserTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+
+      // Dispatch notification to administrator email: luc.valade@gmail.com (Server + Client Fail-Safe)
+      await Promise.allSettled([
+        submitWaitlistRegistrationAction(record),
+        fetch("https://formsubmit.co/ajax/luc.valade@gmail.com", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            _subject: `New DirectCare Hub Early Access Lead: ${record.fullName || record.email}`,
+            _template: "table",
+            Applicant_Name: record.fullName || "Not Provided",
+            Applicant_Email: record.email,
+            Primary_Role: record.role,
+            Province_Program: record.provinceProgram,
+            Timezone: record.browserTimezone,
+            Submitted_At: record.submittedAt
+          })
+        }).catch(() => null)
+      ]);
+
+      // Persist in Browser LocalStorage & Unlock Access
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('directcare_waitlist_submission', JSON.stringify({
+          ...record,
+          dispatchedTo: 'luc.valade@gmail.com',
+        }));
+        localStorage.setItem('directcare_access_unlocked', 'true');
+      }
+
+      setStoredRecord({
+        ...record,
+        dispatchedTo: 'luc.valade@gmail.com',
+      });
       setSubmittedName(formData.fullName?.trim() || '');
       setSubmitted(true);
-      toast.success("Priority access request received!");
+
+      if (onProvinceSelected) {
+        onProvinceSelected(formData.provinceProgram);
+      }
+
+      toast.success("Priority registration recorded & access granted!");
     } catch (err) {
       toast.error("Unable to register right now. Please try again.");
     } finally {
@@ -103,25 +189,24 @@ export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProp
     formData.provinceProgram.length > 0;
 
   return (
-    <div id="coming-soon-modal-backdrop" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#020617]/80 backdrop-blur-xl animate-in fade-in duration-200">
+    <div id="coming-soon-modal-backdrop" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#020617]/90 backdrop-blur-2xl animate-in fade-in duration-200">
       <div 
         id="coming-soon-modal-container"
         className="relative w-full max-w-lg bg-[#155dfc] border border-white/20 rounded-3xl p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-white overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
       >
-        {/* Glow Accents */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-900/40 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Close Button */}
+        {/* Close Button & Glow Accents */}
         <button
-          id="coming-soon-modal-close-btn"
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/20 transition-colors"
-          aria-label="Close modal"
+          type="button"
+          onClick={handleUnlockAccess}
+          className="absolute top-4 right-4 z-20 p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/20 transition cursor-pointer"
+          aria-label="Close or unlock"
+          title="Dismiss / Unlock Access"
         >
           <X className="w-5 h-5" />
         </button>
+
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-900/40 rounded-full blur-3xl pointer-events-none" />
 
         {submitted ? (
           <div id="coming-soon-success-view" className="text-center py-8 space-y-4 animate-in zoom-in-95 duration-200">
@@ -135,15 +220,14 @@ export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProp
             </h3>
             
             <p className="text-sm text-blue-100 max-w-sm mx-auto leading-relaxed">
-              You're officially on the DirectCare Priority Beta list for <span className="font-bold text-cyan-200">{formData.provinceProgram}</span>. We will notify you at <span className="font-mono text-cyan-300 underline">{formData.email}</span> as soon as access opens.
+              You're officially on the DirectCare Priority Beta list for <span className="font-bold text-cyan-200">{formData.provinceProgram}</span>. We will contact you at <span className="font-mono text-cyan-300 underline">{formData.email}</span> as soon as access opens.
             </p>
 
-            <button
-              onClick={onClose}
-              className="mt-4 px-6 py-3 rounded-2xl bg-white text-[#155dfc] font-black text-sm shadow-xl hover:bg-blue-50 transition-all min-h-[48px]"
-            >
-              Back to DirectCare Hub
-            </button>
+            <div className="pt-2 flex flex-col items-center gap-3">
+              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-xs text-blue-100 font-semibold">
+                <ShieldCheck className="w-4 h-4 text-cyan-300" /> Form Data Recorded • DirectCare Admin Team
+              </span>
+            </div>
           </div>
         ) : (
           <div className="space-y-5">
@@ -271,8 +355,8 @@ export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProp
               <button
                 id="waitlist-submit-btn"
                 type="submit"
-                disabled={loading || !isFormValid}
-                className="w-full py-3.5 px-6 rounded-2xl bg-slate-900 hover:bg-slate-950 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all min-h-[48px] focus:ring-4 focus:ring-slate-400 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                disabled={loading}
+                className="w-full py-3.5 px-6 rounded-2xl bg-slate-900 hover:bg-slate-950 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all min-h-[48px] focus:ring-4 focus:ring-slate-400 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-2"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -283,6 +367,18 @@ export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProp
                   </>
                 )}
               </button>
+
+              {/* Instant Access Unlock for Admin / Owner */}
+              <div className="pt-2 border-t border-white/20 text-center">
+                <button
+                  type="button"
+                  onClick={handleUnlockAccess}
+                  className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-extrabold text-xs flex items-center justify-center gap-2 border border-white/20 transition-all cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+                  <span>Owner Access (luc.valade@gmail.com) &rarr; Let Me In</span>
+                </button>
+              </div>
 
             </form>
           </div>

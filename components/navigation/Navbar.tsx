@@ -157,66 +157,98 @@ export default function Navbar({
             <div className="w-10 h-10 bg-blue-600 group-hover:bg-blue-700 rounded-xl flex items-center justify-center text-white shadow-md transition shrink-0">
               <Shield className="w-5.5 h-5.5" />
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-base font-black text-slate-900 leading-none">
-                  DirectCare Hub
-                </span>
-                <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2.5 py-0.5 rounded-full shrink-0">
-                  Ontario DF
-                </span>
-              </div>
+            <div className="flex flex-col text-left">
+              <span className="text-base font-black text-slate-900 leading-none">
+                DirectCare Hub
+              </span>
               <span className="text-[10px] text-slate-400 font-bold tracking-wide uppercase leading-none mt-1">
                 Self-Managed Care
+              </span>
+              <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2.5 py-0.5 rounded-full w-fit shrink-0 border border-blue-200 mt-1">
+                Ontario DF
               </span>
             </div>
           </Link>
         </div>
 
-        {/* Center: Consolidated Primary Links (Desktop) */}
+        {/* Center: Consolidated Primary Links with Hover Explanations (Desktop) */}
         <div className="hidden lg:flex items-center space-x-1">
+          
           {/* 1. Dashboard */}
-          <Link
-            href="/"
-            onClick={() => { if (pathname === "/") handleTabNavigation("overview"); }}
-            className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
-              isDashboardActive
-                ? "bg-blue-50 text-blue-700 font-extrabold"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            <LayoutDashboard className={`w-4 h-4 ${isDashboardActive ? "text-blue-600" : "text-slate-500"}`} />
-            <span>Dashboard</span>
-          </Link>
+          <div className="relative group">
+            <Link
+              href="/"
+              onClick={() => { if (pathname === "/") handleTabNavigation("overview"); }}
+              className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
+                isDashboardActive
+                  ? "bg-blue-50 text-blue-700 font-extrabold"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <LayoutDashboard className={`w-4 h-4 ${isDashboardActive ? "text-blue-600" : "text-slate-500"}`} />
+              <span>Dashboard</span>
+            </Link>
+
+            {/* Hover Explanation Popover */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-2xl shadow-2xl border border-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 text-left">
+              <div className="font-extrabold text-cyan-300 text-xs mb-1">Operations Dashboard</div>
+              <div className="text-[11px] text-slate-300 leading-snug font-normal">
+                High-level overview of active care shifts, ADL runbooks, emergency relief alerts, and provincial funding burn-rate.
+              </div>
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-900" />
+            </div>
+          </div>
 
           {/* 2. Shared Calendar */}
-          <Link
-            href="/calendar"
-            className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
-              isCalendarActive
-                ? "bg-blue-50 text-blue-700 font-extrabold"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            <CalendarIcon className={`w-4 h-4 ${isCalendarActive ? "text-blue-600" : "text-slate-500"}`} />
-            <span>Shared Calendar</span>
-          </Link>
+          <div className="relative group">
+            <Link
+              href="/calendar"
+              className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
+                isCalendarActive
+                  ? "bg-blue-50 text-blue-700 font-extrabold"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <CalendarIcon className={`w-4 h-4 ${isCalendarActive ? "text-blue-600" : "text-slate-500"}`} />
+              <span>Shared Calendar</span>
+            </Link>
 
-          {/* 2. Care Protocols */}
-          <Link
-            href="/protocols/dashboard"
-            className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
-              isProtocolsActive
-                ? "bg-blue-50 text-blue-700 font-extrabold"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            <ClipboardList className={`w-4 h-4 ${isProtocolsActive ? "text-blue-600" : "text-slate-500"}`} />
-            <span>Care Protocols</span>
-          </Link>
+            {/* Hover Explanation Popover */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-2xl shadow-2xl border border-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 text-left">
+              <div className="font-extrabold text-cyan-300 text-xs mb-1">Care Calendar & Roster</div>
+              <div className="text-[11px] text-slate-300 leading-snug font-normal">
+                Schedule attendant shifts, coordinate emergency coverage, and view upcoming caregiver rosters in real-time.
+              </div>
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-900" />
+            </div>
+          </div>
 
-          {/* 3. Time & Payroll Dropdown */}
-          <div className="relative" ref={payrollRef}>
+          {/* 3. Care Protocols */}
+          <div className="relative group">
+            <Link
+              href="/protocols/dashboard"
+              className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
+                isProtocolsActive
+                  ? "bg-blue-50 text-blue-700 font-extrabold"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <ClipboardList className={`w-4 h-4 ${isProtocolsActive ? "text-blue-600" : "text-slate-500"}`} />
+              <span>Care Protocols</span>
+            </Link>
+
+            {/* Hover Explanation Popover */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-2xl shadow-2xl border border-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 text-left">
+              <div className="font-extrabold text-cyan-300 text-xs mb-1">ADL Runbooks & Protocols</div>
+              <div className="text-[11px] text-slate-300 leading-snug font-normal">
+                Define daily morning/evening routine checklists, mechanical lift safety sign-offs, and attendant task guidelines.
+              </div>
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-900" />
+            </div>
+          </div>
+
+          {/* 4. Time & Payroll Dropdown */}
+          <div className="relative group" ref={payrollRef}>
             <button
               onClick={() => setPayrollDropdownOpen(!payrollDropdownOpen)}
               className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
@@ -230,108 +262,170 @@ export default function Navbar({
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${payrollDropdownOpen ? "rotate-180" : ""}`} />
             </button>
 
+            {/* Hover Explanation Popover (Only when dropdown is closed) */}
+            {!payrollDropdownOpen && (
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-2xl shadow-2xl border border-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 text-left">
+                <div className="font-extrabold text-cyan-300 text-xs mb-1">Payroll & Remittance Engine</div>
+                <div className="text-[11px] text-slate-300 leading-snug font-normal">
+                  Calculate provincial overtime (8/44 & 1.5x/2x), generate CPA 005 direct deposit files, and file CRA PD7A remittances.
+                </div>
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-900" />
+              </div>
+            )}
+
             {payrollDropdownOpen && (
-              <div className="absolute left-0 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl py-3 z-50">
+              <div className="absolute left-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl py-3 z-50">
                 <Link
                   href="/timesheets"
                   onClick={() => setPayrollDropdownOpen(false)}
-                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center gap-2"
+                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center justify-between group/sub"
                 >
-                  <Clock className="w-4 h-4 text-slate-400" /> Timesheet Verification
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-slate-400" /> 
+                    <span>Timesheet Verification</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-normal">50m GPS Verified</span>
                 </Link>
                 <Link
                   href="/payroll/stubs"
                   onClick={() => setPayrollDropdownOpen(false)}
-                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center gap-2"
+                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center justify-between group/sub"
                 >
-                  <Banknote className="w-4 h-4 text-emerald-600" /> Wage Statements (T4/Paystub)
+                  <div className="flex items-center gap-2">
+                    <Banknote className="w-4 h-4 text-emerald-600" /> 
+                    <span>Wage Statements (Paystubs)</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-normal">T4 Breakdown</span>
                 </Link>
                 <Link
                   href="/payroll/remittance"
                   onClick={() => setPayrollDropdownOpen(false)}
-                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center gap-2"
+                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center justify-between group/sub"
                 >
-                  <span className="w-4 text-center">🏛️</span> CRA Monthly Remittance
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 text-center">🏛️</span> 
+                    <span>CRA Monthly Remittance</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-normal">PD7A Calculation</span>
                 </Link>
                 <Link
                   href="/payroll/expenses"
                   onClick={() => setPayrollDropdownOpen(false)}
-                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center gap-2"
+                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center justify-between group/sub"
                 >
-                  <span className="w-4 text-center">🎟️</span> Expenses & Reimbursements
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 text-center">🎟️</span> 
+                    <span>Expenses & Claims</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-normal">PPE & Supplies</span>
                 </Link>
                 <Link
                   href="/payroll/yearend"
                   onClick={() => setPayrollDropdownOpen(false)}
-                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center gap-2"
+                  className="px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 font-bold flex items-center justify-between group/sub"
                 >
-                  <span className="w-4 text-center">📊</span> Year-End T4 & ROE Hub
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 text-center">📊</span> 
+                    <span>Year-End T4 & ROE Hub</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-normal">Service Canada XML</span>
                 </Link>
                 <Link
                   href="/master-suite"
                   onClick={() => setPayrollDropdownOpen(false)}
-                  className="px-4 py-2.5 text-xs text-blue-700 bg-blue-50/50 hover:bg-blue-50 font-bold flex items-center gap-2 border-t border-slate-100"
+                  className="px-4 py-2.5 text-xs text-blue-700 bg-blue-50/50 hover:bg-blue-50 font-bold flex items-center justify-between border-t border-slate-100 group/sub"
                 >
-                  <span className="w-4 text-center">🛡️</span> Master Compliance Suite
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 text-center">🛡️</span> 
+                    <span>Master Compliance Suite</span>
+                  </div>
+                  <span className="text-[10px] text-blue-600 font-extrabold">Audit Console</span>
                 </Link>
               </div>
             )}
           </div>
 
-          {/* 4. Attendants */}
+          {/* 5. Attendants */}
           {isEmployer && (
+            <div className="relative group">
+              <Link
+                href="/attendants"
+                className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
+                  isAttendantsActive
+                    ? "bg-blue-50 text-blue-700 font-extrabold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
+              >
+                <Users className={`w-4 h-4 ${isAttendantsActive ? "text-blue-600" : "text-slate-500"}`} />
+                <span>Attendants</span>
+              </Link>
+
+              {/* Hover Explanation Popover */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-2xl shadow-2xl border border-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 text-left">
+                <div className="font-extrabold text-cyan-300 text-xs mb-1">Attendant Roster & Credentials</div>
+                <div className="text-[11px] text-slate-300 leading-snug font-normal">
+                  Manage attendant profiles, hourly wage structures, WSIB lift training certifications, and contact details.
+                </div>
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-900" />
+              </div>
+            </div>
+          )}
+
+          {/* 6. Vault */}
+          <div className="relative group">
             <Link
-              href="/attendants"
+              href="/vault"
               className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
-                isAttendantsActive
+                isVaultActive
                   ? "bg-blue-50 text-blue-700 font-extrabold"
                   : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
               }`}
             >
-              <Users className={`w-4 h-4 ${isAttendantsActive ? "text-blue-600" : "text-slate-500"}`} />
-              <span>Attendants</span>
+              <FolderLock className={`w-4 h-4 ${isVaultActive ? "text-blue-600" : "text-slate-500"}`} />
+              <span>Vault</span>
             </Link>
-          )}
 
-          {/* 5. Vault */}
-          <Link
-            href="/vault"
-            className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
-              isVaultActive
-                ? "bg-blue-50 text-blue-700 font-extrabold"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            <FolderLock className={`w-4 h-4 ${isVaultActive ? "text-blue-600" : "text-slate-500"}`} />
-            <span>Vault</span>
-          </Link>
+            {/* Hover Explanation Popover */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-2xl shadow-2xl border border-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 text-left">
+              <div className="font-extrabold text-cyan-300 text-xs mb-1">Liability & Document Vault</div>
+              <div className="text-[11px] text-slate-300 leading-snug font-normal">
+                Encrypted storage for signed employment agreements, WSIB lift training sign-offs, and CILT audit records.
+              </div>
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-900" />
+            </div>
+          </div>
 
-          {/* 6. Coming Soon Link */}
-          <button
-            type="button"
-            onClick={() => setComingSoonOpen(true)}
-            className="min-h-[48px] px-3.5 rounded-xl text-xs font-bold text-[#155dfc] hover:bg-blue-50 transition flex items-center space-x-1.5 cursor-pointer border border-blue-200/60 bg-blue-50/50"
-          >
-            <Sparkles className="w-4 h-4 text-[#155dfc] animate-pulse" />
-            <span className="font-extrabold">Coming Soon</span>
-          </button>
+          {/* 7. Setup Checklist & Onboarding (LINK FOR EVERYONE) */}
+          <div className="relative group">
+            <Link
+              href="/onboarding"
+              className={`min-h-[48px] px-3.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+                isOnboardingActive
+                  ? "bg-amber-100 text-amber-900 font-extrabold border border-amber-300"
+                  : "bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80"
+              }`}
+            >
+              <Sparkles className="w-4 h-4 text-amber-600 animate-pulse" />
+              <span>Setup Checklist</span>
+            </Link>
+
+            {/* Hover Explanation Popover */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-2xl shadow-2xl border border-slate-700 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 text-left">
+              <div className="font-extrabold text-amber-300 text-xs mb-1">Interactive Setup Wizard</div>
+              <div className="text-[11px] text-slate-300 leading-snug font-normal">
+                Complete the step-by-step onboarding checklist for Employers, Attendants, Bookkeepers, and Program Auditors.
+              </div>
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-900" />
+            </div>
+          </div>
+
         </div>
 
-        {/* Right: Emergency SOS & Early Access & Profile Dropdown */}
+        {/* Right: Emergency SOS & Profile Dropdown / Sign-Up & Log-In */}
         <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
           
-          {/* Early Access / Coming Soon Trigger */}
-          <button
-            onClick={() => setComingSoonOpen(true)}
-            className="min-h-[44px] px-3 py-1.5 bg-gradient-to-r from-blue-900 to-indigo-900 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm"
-            title="Request Beta Priority Access"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span className="hidden sm:inline">Early Access</span>
-          </button>
-
-          {/* Emergency SOS */}
-          {(isEmployer || isAttendant) && (
+          {/* Emergency SOS - ONLY shown when signed in */}
+          {userProfile && (isEmployer || isAttendant) && (
             <EmergencySosButton
               reliefAttendantCount={3}
               onTriggerBroadcast={async () => {
@@ -341,7 +435,19 @@ export default function Navbar({
             />
           )}
 
-          {/* User Profile Popover Dropdown */}
+          {/* Early Access / Coming Soon Trigger - shown when NOT signed in */}
+          {!userProfile && (
+            <button
+              onClick={() => setComingSoonOpen(true)}
+              className="min-h-[44px] px-3 py-1.5 bg-gradient-to-r from-blue-900 to-indigo-900 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm cursor-pointer"
+              title="Request Beta Priority Access"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+              <span className="hidden sm:inline">Coming Soon</span>
+            </button>
+          )}
+
+          {/* User Profile Popover Dropdown (when signed in) OR Sign-Up & Log-In (when signed out) */}
           {userProfile ? (
             <div className="relative" ref={dropdownRef}>
               <button
@@ -447,12 +553,21 @@ export default function Navbar({
               )}
             </div>
           ) : (
-            <Link
-              href="/login"
-              className="min-h-[44px] px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl flex items-center justify-center transition shadow-md cursor-pointer whitespace-nowrap"
-            >
-              Log In
-            </Link>
+            <div className="flex items-center space-x-2">
+              {/* Sign-Up placed to the left of Log-In */}
+              <Link
+                href="/signup"
+                className="text-xs font-bold text-slate-700 hover:text-blue-600 min-h-[44px] px-3 flex items-center transition cursor-pointer"
+              >
+                Sign-Up
+              </Link>
+              <Link
+                href="/login"
+                className="min-h-[44px] px-4 sm:px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl flex items-center justify-center transition shadow-md cursor-pointer whitespace-nowrap"
+              >
+                Log In
+              </Link>
+            </div>
           )}
 
         </div>
@@ -574,6 +689,17 @@ export default function Navbar({
             >
               <FolderLock className="w-4.5 h-4.5 text-blue-600" />
               <span>Secure Document Vault</span>
+            </Link>
+
+            <Link
+              href="/onboarding"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition cursor-pointer ${
+                isOnboardingActive ? "bg-amber-100 text-amber-900 font-extrabold border border-amber-300" : "bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200"
+              }`}
+            >
+              <Sparkles className="w-4.5 h-4.5 text-amber-600 animate-pulse" />
+              <span>Setup Wizard & Onboarding Checklist</span>
             </Link>
 
             <button

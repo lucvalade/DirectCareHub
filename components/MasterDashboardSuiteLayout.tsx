@@ -40,7 +40,8 @@ import { PswShiftClockInComponent } from '@/components/shift/PswShiftClockInComp
 import { PricingSectionComponent } from '@/components/pricing/PricingSectionComponent';
 import { OfflineDropSimulator } from '@/components/testing/OfflineDropSimulator';
 import AuditorBurnRateTrackingPage from '@/app/dashboard/auditor/burn-rate/page';
-import { generateCPA005DirectDepositFileAction, generateServiceCanadaRoeXmlAction, MOCK_MASTER_STATEMENTS, MOCK_ROE_DATA } from '@/lib/serverActions';
+import { generateCPA005DirectDepositFileAction, generateServiceCanadaRoeXmlAction } from '@/lib/serverActions';
+import { MOCK_MASTER_STATEMENTS, MOCK_ROE_DATA } from '@/lib/mockComplianceData';
 
 // ============================================================================
 // 1. NAVIGATION TAXONOMY BY ROLE

@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import NavigationHeader from "@/components/NavigationHeader";
 import SosResolutionListener from "@/components/SosResolutionListener";
 import PricingSection from "@/components/PricingSection";
+import ComingSoonModal from "@/components/ComingSoonModal";
 import { 
   ShieldCheck, 
   Clock, 
@@ -95,6 +96,17 @@ const DEFAULT_RUNBOOK: RunbookTask[] = [
 function HomeContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  
+  const [comingSoonOpen, setComingSoonOpen] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isUnlocked = localStorage.getItem('directcare_access_unlocked') === 'true' || localStorage.getItem('directcare_waitlist_submitted') === 'true';
+      if (isUnlocked) {
+        setComingSoonOpen(false);
+      }
+    }
+  }, []);
   
   // Geolocation and Timezone dynamic province scaling
   const [provinceName, setProvinceName] = useState("Ontario");
@@ -758,15 +770,13 @@ function HomeContent() {
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-md">
               <Shield className="w-5.5 h-5.5" />
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-base font-black text-slate-900 leading-none">DirectCare Hub</span>
-                <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full shrink-0 border border-blue-200">
-                  {provinceBadge}
-                </span>
-              </div>
+            <div className="flex flex-col text-left">
+              <span className="text-base font-black text-slate-900 leading-none">DirectCare Hub</span>
               <span className="text-[9px] text-slate-400 font-bold tracking-wide uppercase leading-none mt-1">
                 Self-Managed Care
+              </span>
+              <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full w-fit shrink-0 border border-blue-200 mt-1">
+                {provinceBadge}
               </span>
             </div>
           </Link>
@@ -805,30 +815,31 @@ function HomeContent() {
             </button>
           </nav>
 
-          {/* Actions - Login & Launch */}
-          <div className="flex items-center space-x-3">
+          {/* Actions - Coming Soon, Sign-Up & Log In */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
             <button
-              onClick={handleLaunchOrLogin}
-              className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-black rounded-lg uppercase tracking-wider"
+              onClick={() => setComingSoonOpen(true)}
+              className="min-h-[44px] px-3 py-1.5 bg-gradient-to-r from-blue-900 to-indigo-900 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm cursor-pointer"
+              title="Request Beta Priority Access"
             >
-              <Radio className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
-              <span>Live SOS Active</span>
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+              <span className="hidden sm:inline">Coming Soon</span>
             </button>
 
-            <button
-              onClick={handleLaunchOrLogin}
-              className="text-xs font-bold text-slate-600 hover:text-blue-600 min-h-[48px] px-3 cursor-pointer"
+            <Link
+              href="/signup"
+              className="text-xs font-bold text-slate-700 hover:text-blue-600 min-h-[48px] px-3 flex items-center transition cursor-pointer"
             >
-              Log In
-            </button>
+              Sign-Up
+            </Link>
 
-            <button
-              onClick={handleLaunchOrLogin}
+            <Link
+              href="/login"
               className="min-h-[48px] px-4 sm:px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black shadow-sm transition-transform hover:scale-[1.02] cursor-pointer flex items-center gap-1.5"
             >
-              <span>Launch App</span>
+              <span>Log In</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Link>
           </div>
 
         </div>
@@ -1369,6 +1380,28 @@ function HomeContent() {
         </div>
       </footer>
 
+      <ComingSoonModal 
+        isOpen={comingSoonOpen} 
+        onClose={() => setComingSoonOpen(false)}
+        onProvinceSelected={(programStr) => {
+          if (programStr.includes("Ontario")) {
+            setProvinceName("Ontario");
+            setProvinceBadge("Ontario DF");
+          } else if (programStr.includes("British Columbia")) {
+            setProvinceName("British Columbia");
+            setProvinceBadge("BC CSIL");
+          } else if (programStr.includes("Alberta")) {
+            setProvinceName("Alberta");
+            setProvinceBadge("Alberta SMC");
+          } else if (programStr.includes("Manitoba")) {
+            setProvinceName("Manitoba");
+            setProvinceBadge("Manitoba DF");
+          } else if (programStr.includes("Nova Scotia")) {
+            setProvinceName("Nova Scotia");
+            setProvinceBadge("NS Care");
+          }
+        }}
+      />
     </div>
   );
 }
