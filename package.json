@@ -22,7 +22,7 @@
     "jspdf": "^4.2.1",
     "lucide-react": "^1.16.0",
     "motion": "^12.4.7",
-    "next": "^15.2.0",
+    "next": "^15.5.28",
     "pdfkit": "^0.20.2",
     "pdfkit-table": "^0.2.11",
     "react": "19.0.0",
@@ -31,7 +31,7 @@
     "tailwind-merge": "^3.0.1",
     "uuid": "^14.0.2",
     "web-push": "^3.6.7",
-    "zod": "^4.6.5",
+    "zod": "^4.6.6",
     "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
